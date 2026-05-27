@@ -24,12 +24,22 @@ class AppRouter {
       GoRoute(
         path: '/search',
         name: 'search',
-        builder: (context, state) => const SearchResultsScreen(),
+        builder: (context, state) {
+          final String query = state.uri.queryParameters['q'] ?? '';
+          return SearchResultsScreen(query: query);
+        },
       ),
       GoRoute(
         path: '/details',
         name: 'details',
-        builder: (context, state) => const BookDetailsScreen(),
+        builder: (context, state) {
+          final String workId = state.uri.queryParameters['workId'] ?? '';
+          final String? title = state.uri.queryParameters['title'];
+          return BookDetailsScreen(
+            workId: workId,
+            fallbackTitle: title,
+          );
+        },
       ),
       GoRoute(
         path: '/library',

@@ -16,7 +16,7 @@ void main() {
     await tester.pumpWidget(const BookShelfApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Home Screen'), findsOneWidget);
+    expect(find.text('BookShelf'), findsOneWidget);
+    expect(find.text('Search books'), findsOneWidget);
   });
 }
