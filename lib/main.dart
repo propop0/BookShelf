@@ -1,8 +1,13 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const BookShelfApp());
+  runApp(
+    const ProviderScope(
+      child: BookShelfApp(),
+    ),
+  );
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/di/app_dependencies.dart';
-import '../../../core/error/failure.dart';
 import '../../../core/widgets/book_card.dart';
 import '../../book_catalog/domain/entities/book.dart';
-import '../../book_catalog/domain/usecases/search_books_use_case.dart';
+import 'providers/search_books_notifier.dart';
 
-class SearchResultsScreen extends StatefulWidget {
+class SearchResultsScreen extends ConsumerStatefulWidget {
   const SearchResultsScreen({
     super.key,
     required this.query,
@@ -16,114 +15,87 @@ class SearchResultsScreen extends StatefulWidget {
   final String query;
 
   @override
-  State<SearchResultsScreen> createState() => _SearchResultsScreenState();
+  ConsumerState<SearchResultsScreen> createState() => _SearchResultsScreenState();
 }
 
-class _SearchResultsScreenState extends State<SearchResultsScreen> {
-  late final SearchBooksUseCase _searchBooksUseCase;
-  bool _isLoading = true;
-  String? _errorMessage;
-  List<Book> _books = <Book>[];
-
+class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   @override
   void initState() {
     super.initState();
-    _searchBooksUseCase = AppDependencies.searchBooksUseCase;
-    _loadResults();
-  }
-
-  Future<void> _loadResults() async {
-    final String query = widget.query.trim();
-    if (query.isEmpty) {
-      setState(() {
-        _books = <Book>[];
-        _isLoading = false;
-        _errorMessage = 'Search query is empty.';
-      });
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    final ({List<Book>? data, Failure? failure}) result = await _searchBooksUseCase(
-      query,
-    );
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = false;
-      _books = result.data ?? <Book>[];
-      _errorMessage = result.failure?.message;
+    Future<void>.microtask(() {
+      ref.read(searchBooksNotifierProvider.notifier).search(widget.query);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final AsyncValue<List<Book>> state = ref.watch(searchBooksNotifierProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Results: "${widget.query}"'),
       ),
-      body: _buildBody(context),
+      body: _buildBody(context, state),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_errorMessage != null) {
-      return Center(
+  Widget _buildBody(BuildContext context, AsyncValue<List<Book>> state) {
+    return state.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                _errorMessage!,
+                _humanizeError(error),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: _loadResults,
+                onPressed: () => ref.read(searchBooksNotifierProvider.notifier).retry(),
                 child: const Text('Retry'),
               ),
             ],
           ),
         ),
-      );
-    }
+      ),
+      data: (books) {
+        if (books.isEmpty) {
+          return const Center(
+            child: Text('No books found for this query.'),
+          );
+        }
 
-    if (_books.isEmpty) {
-      return const Center(
-        child: Text('No books found for this query.'),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadResults,
-      child: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: _books.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (BuildContext context, int index) {
-          final Book book = _books[index];
-          return BookCard(
-            book: book,
-            onTap: () {
-              context.push(
-                '/details?workId=${Uri.encodeQueryComponent(book.workId)}&title=${Uri.encodeQueryComponent(book.title)}',
+        return RefreshIndicator(
+          onRefresh: () => ref.read(searchBooksNotifierProvider.notifier).retry(),
+          child: ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: books.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (BuildContext context, int index) {
+              final Book book = books[index];
+              return BookCard(
+                book: book,
+                onTap: () {
+                  context.push(
+                    '/details?workId=${Uri.encodeQueryComponent(book.workId)}&title=${Uri.encodeQueryComponent(book.title)}',
+                  );
+                },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  String _humanizeError(Object error) {
+    final String value = error.toString();
+    if (value.startsWith('Exception: ')) {
+      return value.replaceFirst('Exception: ', '');
+    }
+    return value;
   }
 }

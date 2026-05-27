@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MyLibraryScreen extends StatelessWidget {
+class MyLibraryScreen extends ConsumerWidget {
   const MyLibraryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Library'),
+        title: const Text('My Library'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('My Library Screen'),
       ),
     );

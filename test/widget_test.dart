@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bookshelf/app.dart';
 
@@ -13,7 +14,11 @@ void main() {
   testWidgets('Home screen is displayed on app start', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const BookShelfApp());
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: BookShelfApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('BookShelf'), findsOneWidget);
