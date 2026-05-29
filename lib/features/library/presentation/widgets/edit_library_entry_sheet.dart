@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../../domain/entities/library_entry.dart';
 import '../../domain/entities/reading_status.dart';
@@ -202,13 +203,14 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
   @override
   Widget build(BuildContext context) {
     final bool isLoading = ref.watch(libraryControllerProvider).isLoading;
+    final l10n = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
         top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 110,
       ),
       child: Form(
         key: _formKey,
@@ -218,27 +220,26 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                widget.existing == null ? 'Add to library' : 'Edit library entry',
+                widget.existing == null ? l10n.addToLibrarySheet : l10n.editLibraryEntry,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _openBookDetails,
                 icon: const Icon(Icons.open_in_new),
-                label: const Text('View details'),
+                label: Text(l10n.viewDetails),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<ReadingStatus>(
                 initialValue: _status,
-                decoration: const InputDecoration(
-                  labelText: 'Status',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.statusLabel,
                 ),
                 items: ReadingStatus.values
                     .map(
                       (status) => DropdownMenuItem<ReadingStatus>(
                         value: status,
-                        child: Text(status.label),
+                        child: Text(status.localizedLabel(l10n)),
                       ),
                     )
                     .toList(),
@@ -252,9 +253,8 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
               TextFormField(
                 controller: _ratingController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Rating (1-10)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.ratingLabel,
                 ),
                 validator: (String? value) {
                   final String text = (value ?? '').trim();
@@ -263,7 +263,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   }
                   final int? rating = int.tryParse(text);
                   if (rating == null || rating < 1 || rating > 10) {
-                    return 'Enter a rating from 1 to 10.';
+                    return l10n.validationRating;
                   }
                   return null;
                 },
@@ -272,9 +272,8 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
               TextFormField(
                 controller: _pageController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Current page',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.currentPageLabel,
                 ),
                 validator: (String? value) {
                   final String text = (value ?? '').trim();
@@ -283,21 +282,24 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   }
                   final int? page = int.tryParse(text);
                   if (page == null || page < 1) {
-                    return 'Enter a valid page number.';
+                    return l10n.validationPage;
                   }
-                  return ReadingPageValidator.currentPageExceedsTotal(
+                  final int? total = _effectiveTotalPages();
+                  if (ReadingPageValidator.currentExceedsTotal(
                     currentPage: page,
-                    totalPages: _effectiveTotalPages(),
-                  );
+                    totalPages: total,
+                  )) {
+                    return l10n.validationCurrentExceedsTotal(total!);
+                  }
+                  return null;
                 },
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _totalPagesController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Total pages (optional)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.totalPagesLabel,
                 ),
                 validator: (String? value) {
                   final String text = (value ?? '').trim();
@@ -306,21 +308,24 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   }
                   final int? pages = int.tryParse(text);
                   if (pages == null || pages < 1) {
-                    return 'Enter a valid total page count.';
+                    return l10n.validationTotalPages;
                   }
-                  return ReadingPageValidator.totalPagesBelowCurrent(
-                    currentPage: _effectiveCurrentPage(),
+                  final int? current = _effectiveCurrentPage();
+                  if (ReadingPageValidator.totalBelowCurrent(
+                    currentPage: current,
                     totalPages: pages,
-                  );
+                  )) {
+                    return l10n.validationTotalBelowCurrent(current!);
+                  }
+                  return null;
                 },
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _reviewController,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Review',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.reviewLabel,
                 ),
               ),
               const SizedBox(height: 16),
@@ -332,7 +337,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l10n.save),
               ),
             ],
           ),

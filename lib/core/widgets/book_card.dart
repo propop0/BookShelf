@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../features/book_catalog/domain/entities/book.dart';
+import '../l10n/l10n_extensions.dart';
+import 'app_card.dart';
 
 class BookCard extends StatelessWidget {
   const BookCard({
@@ -14,47 +16,47 @@ class BookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: <Widget>[
-              _BookCover(url: book.coverUrl),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      book.title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      book.authorsLabel,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (book.firstPublishYear != null) ...<Widget>[
-                      const SizedBox(height: 6),
-                      Text(
-                        'First published: ${book.firstPublishYear}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ],
+    final l10n = context.l10n;
+    final String authors = book.authorNames.isEmpty
+        ? l10n.unknownAuthor
+        : book.authorsLabel;
+
+    return AppCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        children: <Widget>[
+          _BookCover(url: book.coverUrl),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  book.title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  authors,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (book.firstPublishYear != null) ...<Widget>[
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.firstPublished(book.firstPublishYear!),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -69,11 +71,13 @@ class _BookCover extends StatelessWidget {
   Widget build(BuildContext context) {
     final String? coverUrl = url;
     if (coverUrl == null || coverUrl.isEmpty) {
-      return _PlaceholderCover(color: Theme.of(context).colorScheme.surfaceContainerHighest);
+      return _PlaceholderCover(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      );
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(12),
       child: Image.network(
         coverUrl,
         width: 72,
@@ -101,7 +105,7 @@ class _PlaceholderCover extends StatelessWidget {
       height: 96,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,
       child: Icon(

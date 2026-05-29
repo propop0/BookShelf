@@ -1,17 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-String mapAuthException(Object error) {
+import '../../../../l10n/app_localizations.dart';
+
+String mapAuthException(Object error, AppLocalizations l10n) {
   if (error is FirebaseAuthException) {
     return switch (error.code) {
-      'invalid-email' => 'Invalid email address.',
-      'user-disabled' => 'This account has been disabled.',
-      'user-not-found' => 'No account found for this email.',
-      'wrong-password' => 'Incorrect password.',
-      'email-already-in-use' => 'An account already exists for this email.',
-      'weak-password' => 'Password is too weak. Use at least 6 characters.',
-      'invalid-credential' => 'Invalid email or password.',
-      'too-many-requests' => 'Too many attempts. Try again later.',
-      _ => error.message ?? 'Authentication failed.',
+      'invalid-email' => l10n.authInvalidEmail,
+      'user-disabled' => l10n.authUserDisabled,
+      'user-not-found' => l10n.authUserNotFound,
+      'wrong-password' => l10n.authWrongPassword,
+      'email-already-in-use' => l10n.authEmailInUse,
+      'weak-password' => l10n.authWeakPassword,
+      'invalid-credential' => l10n.authInvalidCredential,
+      'too-many-requests' => l10n.authTooManyRequests,
+      _ => error.message ?? l10n.authFailed,
     };
   }
   return error.toString();

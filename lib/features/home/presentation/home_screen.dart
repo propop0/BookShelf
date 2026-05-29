@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/api_constants.dart';
+import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/utils/search_query_display.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/book_card.dart';
+import '../../../core/widgets/category_pill.dart';
 import '../../book_catalog/domain/entities/book.dart';
 import '../../search/presentation/providers/search_providers.dart';
 import '../domain/constants/book_categories.dart';
@@ -68,10 +71,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<Book>> trendingState = ref.watch(trendingBooksProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BookShelf'),
+        title: Text(l10n.appTitle),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -79,10 +83,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           await ref.read(trendingBooksProvider.future);
         },
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 150),
           children: <Widget>[
             Text(
-              'Search books',
+              l10n.searchBooks,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 12),
@@ -94,18 +98,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   TextFormField(
                     controller: _queryController,
                     textInputAction: TextInputAction.search,
-                    decoration: const InputDecoration(
-                      labelText: 'Title or author',
-                      hintText: 'e.g. Harry Potter',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.searchFieldLabel,
+                      hintText: l10n.searchHint,
                     ),
                     validator: (String? value) {
                       final String text = (value ?? '').trim();
                       if (text.isEmpty) {
-                        return 'Please enter a search query.';
+                        return l10n.searchValidationEmpty;
                       }
                       if (text.length < 2) {
-                        return 'Use at least 2 characters.';
+                        return l10n.searchValidationMinLength;
                       }
                       return null;
                     },
@@ -115,59 +118,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   FilledButton.icon(
                     onPressed: _submitSearch,
                     icon: const Icon(Icons.search),
-                    label: const Text('Search'),
+                    label: Text(l10n.searchButton),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 36),
             Text(
-              'Popular categories',
+              l10n.popularCategories,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
             GridView.builder(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: ApiConstants.categoryGridCrossAxisCount,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1.35,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 2.4,
               ),
               itemCount: popularBookCategories.length,
               itemBuilder: (BuildContext context, int index) {
                 final BookCategory category = popularBookCategories[index];
-                return Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () => _openCategory(category),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            category.icon,
-                            size: 32,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            category.label,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return CategoryPill(
+                  label: category.localizedLabel(l10n),
+                  icon: category.icon,
+                  onTap: () => _openCategory(category),
                 );
               },
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 36),
             Text(
-              'Trending today',
+              l10n.trendingToday,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
@@ -196,43 +180,43 @@ class _TrendingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return trendingState.when(
       loading: () => const SizedBox(
-        height: 180,
+        height: 130,
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (Object error, _) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                _humanizeError(error),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: onRetry,
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
+      error: (Object error, _) => AppCard(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              _humanizeError(error),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: onRetry,
+              child: Text(l10n.retry),
+            ),
+          ],
         ),
       ),
       data: (List<Book> books) {
         if (books.isEmpty) {
-          return const Card(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('No trending books available right now.'),
-            ),
+          return AppCard(
+            padding: const EdgeInsets.all(16),
+            child: Text(l10n.noTrendingBooks),
           );
         }
 
         return SizedBox(
-          height: 196,
+          height: 140,
           child: ListView.separated(
+            clipBehavior: Clip.none,
+            padding: const EdgeInsets.only(bottom: 8),
             scrollDirection: Axis.horizontal,
             itemCount: books.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),

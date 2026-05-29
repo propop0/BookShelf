@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import 'providers/auth_controller.dart';
 import 'utils/auth_exception_mapper.dart';
 import 'widgets/auth_form_field.dart';
@@ -40,7 +41,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     final AsyncValue<void> authState = ref.read(authControllerProvider);
     if (authState.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mapAuthException(authState.error!))),
+        SnackBar(content: Text(mapAuthException(authState.error!, context.l10n))),
       );
       return;
     }
@@ -51,9 +52,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isLoading = ref.watch(authControllerProvider).isLoading;
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset password')),
+      appBar: AppBar(title: Text(l10n.resetPassword)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -66,31 +68,26 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   const Icon(Icons.mark_email_read_outlined, size: 48),
                   const SizedBox(height: 12),
                   Text(
-                    'Password reset email sent. Check your inbox.',
+                    l10n.resetEmailSent,
                     style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: () => context.go('/login'),
-                    child: const Text('Back to Sign In'),
+                    child: Text(l10n.backToSignIn),
                   ),
                 ] else ...<Widget>[
-                  const Text(
-                    'Enter your email and we will send you a reset link.',
-                  ),
+                  Text(l10n.resetPasswordInstructions),
                   const SizedBox(height: 16),
                   AuthFormField(
                     controller: _emailController,
-                    label: 'Email',
+                    label: l10n.email,
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
+                    validator: (String? value) {
                       final String text = (value ?? '').trim();
-                      if (text.isEmpty) {
-                        return 'Enter your email.';
-                      }
-                      if (!text.contains('@')) {
-                        return 'Enter a valid email.';
+                      if (text.isEmpty || !text.contains('@')) {
+                        return l10n.validationEmail;
                       }
                       return null;
                     },
@@ -105,7 +102,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Send reset link'),
+                        : Text(l10n.sendResetLink),
                   ),
                 ],
               ],

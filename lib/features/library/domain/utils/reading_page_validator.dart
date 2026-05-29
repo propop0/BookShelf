@@ -1,29 +1,23 @@
 class ReadingPageValidator {
   const ReadingPageValidator._();
 
-  static String? currentPageExceedsTotal({
+  static bool currentExceedsTotal({
     required int? currentPage,
     required int? totalPages,
   }) {
     if (currentPage == null || totalPages == null || totalPages <= 0) {
-      return null;
+      return false;
     }
-    if (currentPage > totalPages) {
-      return 'Current page cannot exceed $totalPages total pages.';
-    }
-    return null;
+    return currentPage > totalPages;
   }
 
-  static String? totalPagesBelowCurrent({
+  static bool totalBelowCurrent({
     required int? currentPage,
     required int? totalPages,
   }) {
     if (currentPage == null || totalPages == null || totalPages <= 0) {
-      return null;
+      return false;
     }
-    if (totalPages < currentPage) {
-      return 'Total pages must be at least $currentPage (current page).';
-    }
-    return null;
+    return totalPages < currentPage;
   }
 }

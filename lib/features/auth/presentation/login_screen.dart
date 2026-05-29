@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import 'providers/auth_controller.dart';
 import 'utils/auth_exception_mapper.dart';
 import 'widgets/auth_form_field.dart';
@@ -42,7 +43,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final AsyncValue<void> authState = ref.read(authControllerProvider);
     if (authState.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mapAuthException(authState.error!))),
+        SnackBar(content: Text(mapAuthException(authState.error!, context.l10n))),
       );
     }
   }
@@ -50,9 +51,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isLoading = ref.watch(authControllerProvider).isLoading;
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign In')),
+      appBar: AppBar(title: Text(l10n.signIn)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -62,23 +64,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Text(
-                  'BookShelf',
+                  l10n.welcomeBack,
                   style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 AuthFormField(
                   controller: _emailController,
-                  label: 'Email',
+                  label: l10n.email,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
                     final String text = (value ?? '').trim();
                     if (text.isEmpty) {
-                      return 'Enter your email.';
+                      return l10n.validationEmail;
                     }
                     if (!text.contains('@')) {
-                      return 'Enter a valid email.';
+                      return l10n.validationEmail;
                     }
                     return null;
                   },
@@ -86,12 +88,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 12),
                 AuthFormField(
                   controller: _passwordController,
-                  label: 'Password',
+                  label: l10n.password,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                   validator: (value) {
                     if ((value ?? '').isEmpty) {
-                      return 'Enter your password.';
+                      return l10n.validationPassword;
                     }
                     return null;
                   },
@@ -102,7 +104,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => context.push('/forgot-password'),
-                    child: const Text('Forgot password?'),
+                    child: Text(l10n.forgotPassword),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -114,12 +116,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Sign In'),
+                      : Text(l10n.signIn),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.push('/register'),
-                  child: const Text('Create an account'),
+                  child: Text(l10n.createAccountPrompt),
                 ),
               ],
             ),

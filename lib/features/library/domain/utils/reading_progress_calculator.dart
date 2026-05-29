@@ -21,16 +21,16 @@ class ReadingProgressCalculator {
     final int? totalPages = resolvedTotalPages ?? entry.numberOfPages;
     if (totalPages != null && totalPages > 0) {
       final double fraction = (currentPage / totalPages).clamp(0.0, 1.0);
-      final int percent = (fraction * 100).round();
       return ReadingProgress(
+        currentPage: currentPage,
+        totalPages: totalPages,
         value: fraction,
-        label: 'Page $currentPage of $totalPages ($percent%)',
       );
     }
 
     return ReadingProgress(
+      currentPage: currentPage,
       value: null,
-      label: 'Page $currentPage — total pages unknown',
     );
   }
 }

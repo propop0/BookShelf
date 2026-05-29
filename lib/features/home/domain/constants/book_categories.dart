@@ -1,55 +1,66 @@
 import 'package:flutter/material.dart';
 
+enum BookCategoryKey {
+  fiction,
+  science,
+  history,
+  romance,
+  fantasy,
+  mystery,
+  biography,
+  children,
+}
+
 class BookCategory {
   const BookCategory({
-    required this.label,
+    required this.key,
     required this.searchQuery,
     required this.icon,
   });
 
-  final String label;
+  final BookCategoryKey key;
   final String searchQuery;
   final IconData icon;
 }
 
 const List<BookCategory> popularBookCategories = <BookCategory>[
   BookCategory(
-    label: 'Fiction',
+    key: BookCategoryKey.fiction,
     searchQuery: 'subject:fiction',
     icon: Icons.auto_stories_outlined,
   ),
   BookCategory(
-    label: 'Science',
+    key: BookCategoryKey.science,
     searchQuery: 'subject:science',
     icon: Icons.biotech_outlined,
   ),
   BookCategory(
-    label: 'History',
+    key: BookCategoryKey.history,
     searchQuery: 'subject:history',
     icon: Icons.history_edu_outlined,
   ),
   BookCategory(
-    label: 'Romance',
+    key: BookCategoryKey.romance,
     searchQuery: 'subject:romance',
     icon: Icons.favorite_border,
   ),
   BookCategory(
-    label: 'Fantasy',
+    key: BookCategoryKey.fantasy,
     searchQuery: 'subject:fantasy',
     icon: Icons.auto_fix_high_outlined,
   ),
   BookCategory(
-    label: 'Mystery',
+    key: BookCategoryKey.mystery,
     searchQuery: 'subject:mystery',
     icon: Icons.search_outlined,
   ),
   BookCategory(
-    label: 'Biography',
+    key: BookCategoryKey.biography,
     searchQuery: 'subject:biography',
     icon: Icons.person_outline,
   ),
   BookCategory(
-    label: 'Children',
+    key: BookCategoryKey.children,
     searchQuery: 'subject:children',
     icon: Icons.child_care_outlined,
   ),

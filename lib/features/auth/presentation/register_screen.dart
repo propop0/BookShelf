@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
 import 'providers/auth_controller.dart';
 import 'utils/auth_exception_mapper.dart';
 import 'widgets/auth_form_field.dart';
@@ -44,7 +45,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final AsyncValue<void> authState = ref.read(authControllerProvider);
     if (authState.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mapAuthException(authState.error!))),
+        SnackBar(content: Text(mapAuthException(authState.error!, context.l10n))),
       );
     }
   }
@@ -52,9 +53,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isLoading = ref.watch(authControllerProvider).isLoading;
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
+      appBar: AppBar(title: Text(l10n.signUp)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -65,15 +67,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               children: <Widget>[
                 AuthFormField(
                   controller: _emailController,
-                  label: 'Email',
+                  label: l10n.email,
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
+                  validator: (String? value) {
                     final String text = (value ?? '').trim();
-                    if (text.isEmpty) {
-                      return 'Enter your email.';
-                    }
-                    if (!text.contains('@')) {
-                      return 'Enter a valid email.';
+                    if (text.isEmpty || !text.contains('@')) {
+                      return l10n.validationEmail;
                     }
                     return null;
                   },
@@ -81,11 +80,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 12),
                 AuthFormField(
                   controller: _passwordController,
-                  label: 'Password',
+                  label: l10n.password,
                   obscureText: true,
-                  validator: (value) {
+                  validator: (String? value) {
                     if ((value ?? '').length < 6) {
-                      return 'Password must be at least 6 characters.';
+                      return l10n.validationPasswordMin;
                     }
                     return null;
                   },
@@ -93,11 +92,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 12),
                 AuthFormField(
                   controller: _confirmPasswordController,
-                  label: 'Confirm password',
+                  label: l10n.confirmPassword,
                   obscureText: true,
-                  validator: (value) {
+                  validator: (String? value) {
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match.';
+                      return l10n.validationConfirmPassword;
                     }
                     return null;
                   },
@@ -112,11 +111,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Create account'),
+                      : Text(l10n.createAccount),
                 ),
                 TextButton(
                   onPressed: () => context.go('/login'),
-                  child: const Text('Already have an account? Sign in'),
+                  child: Text(l10n.alreadyHaveAccount),
                 ),
               ],
             ),

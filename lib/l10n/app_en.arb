@@ -1,0 +1,169 @@
+{
+  "@@locale": "en",
+  "appTitle": "BookShelf",
+  "navHome": "Home",
+  "navLibrary": "Library",
+  "navProfile": "Profile",
+  "searchBooks": "Search books",
+  "searchHint": "e.g. Harry Potter",
+  "searchFieldLabel": "Title or author",
+  "searchButton": "Search",
+  "searchValidationEmpty": "Please enter a search query.",
+  "searchValidationMinLength": "Use at least 2 characters.",
+  "popularCategories": "Popular categories",
+  "trendingToday": "Trending today",
+  "retry": "Retry",
+  "noTrendingBooks": "No trending books available right now.",
+  "categoryFiction": "Fiction",
+  "categoryScience": "Science",
+  "categoryHistory": "History",
+  "categoryRomance": "Romance",
+  "categoryFantasy": "Fantasy",
+  "categoryMystery": "Mystery",
+  "categoryBiography": "Biography",
+  "categoryChildren": "Children",
+  "myLibrary": "My Library",
+  "libraryError": "Error: {message}",
+  "@libraryError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "libraryEmptyTab": "No books in \"{status}\".",
+  "@libraryEmptyTab": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "statusReading": "Reading",
+  "statusRead": "Read",
+  "statusWantToRead": "Want to read",
+  "profile": "Profile",
+  "signOut": "Sign out",
+  "gallery": "Gallery",
+  "camera": "Camera",
+  "statistics": "Statistics",
+  "booksRead": "Books read",
+  "averageRating": "Average rating",
+  "favoriteGenre": "Favorite genre",
+  "genreVarious": "Various",
+  "notAvailable": "—",
+  "settings": "Settings",
+  "theme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System",
+  "toggleTheme": "Toggle theme",
+  "language": "Language",
+  "languageEnglish": "English",
+  "languageUkrainian": "Ukrainian",
+  "languagePolish": "Polish",
+  "viewDetails": "View details",
+  "delete": "Delete",
+  "ratingOutOfTen": "Rating: {rating}/10",
+  "@ratingOutOfTen": {
+    "placeholders": {
+      "rating": {"type": "int"}
+    }
+  },
+  "pageNumber": "Page {page}",
+  "@pageNumber": {
+    "placeholders": {
+      "page": {"type": "int"}
+    }
+  },
+  "readingProgressDeterminate": "Page {current} of {total} ({percent}%)",
+  "@readingProgressDeterminate": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"},
+      "percent": {"type": "int"}
+    }
+  },
+  "readingProgressUnknownTotal": "Page {current} — total pages unknown",
+  "@readingProgressUnknownTotal": {
+    "placeholders": {
+      "current": {"type": "int"}
+    }
+  },
+  "addToLibrary": "Add to library",
+  "editLibraryEntry": "Edit library entry",
+  "addToLibrarySheet": "Add to library",
+  "statusLabel": "Status",
+  "ratingLabel": "Rating (1-10)",
+  "currentPageLabel": "Current page",
+  "totalPagesLabel": "Total pages (optional)",
+  "reviewLabel": "Review",
+  "save": "Save",
+  "validationRating": "Enter a rating from 1 to 10.",
+  "validationPage": "Enter a valid page number.",
+  "validationCurrentExceedsTotal": "Current page cannot exceed {total} total pages.",
+  "@validationCurrentExceedsTotal": {
+    "placeholders": {
+      "total": {"type": "int"}
+    }
+  },
+  "validationTotalBelowCurrent": "Total pages must be at least {current} (current page).",
+  "@validationTotalBelowCurrent": {
+    "placeholders": {
+      "current": {"type": "int"}
+    }
+  },
+  "validationTotalPages": "Enter a valid total page count.",
+  "bookDetails": "Book Details",
+  "author": "Author",
+  "published": "Published",
+  "pages": "Pages",
+  "description": "Description",
+  "subjects": "Subjects",
+  "unknownAuthor": "Unknown author",
+  "searchResultsTitle": "Results: \"{query}\"",
+  "@searchResultsTitle": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
+  "searchCategoryTitle": "Category: {name}",
+  "@searchCategoryTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "noSearchResults": "No books found for this query.",
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "forgotPassword": "Forgot password?",
+  "createAccount": "Create account",
+  "alreadyHaveAccount": "Already have an account? Sign in",
+  "createAccountPrompt": "Create an account",
+  "resetPassword": "Reset password",
+  "resetPasswordInstructions": "Enter your email and we will send you a reset link.",
+  "sendResetLink": "Send reset link",
+  "backToSignIn": "Back to Sign In",
+  "resetEmailSent": "Check your inbox for a password reset link.",
+  "welcomeBack": "Welcome back",
+  "validationEmail": "Enter a valid email.",
+  "validationPassword": "Enter your password.",
+  "validationPasswordMin": "Use at least 6 characters.",
+  "validationConfirmPassword": "Passwords do not match.",
+  "firstPublished": "First published: {year}",
+  "@firstPublished": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+  "authInvalidEmail": "Invalid email address.",
+  "authUserDisabled": "This account has been disabled.",
+  "authUserNotFound": "No account found for this email.",
+  "authWrongPassword": "Incorrect password.",
+  "authEmailInUse": "An account already exists for this email.",
+  "authWeakPassword": "Password is too weak. Use at least 6 characters.",
+  "authInvalidCredential": "Invalid email or password.",
+  "authTooManyRequests": "Too many attempts. Try again later.",
+  "authFailed": "Authentication failed.",
+  "storagePhotoNotFound": "Profile photo not found in storage. Please ensure Firebase Storage is enabled in the Firebase Console.",
+  "searchQueryEmpty": "Search query is empty."
+}

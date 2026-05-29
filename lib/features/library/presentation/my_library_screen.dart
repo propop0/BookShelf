@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/widgets/pill_segmented_bar.dart';
 import '../../auth/presentation/providers/auth_providers.dart';
 import '../domain/entities/library_entry.dart';
 import '../domain/entities/reading_status.dart';
@@ -17,21 +19,8 @@ class MyLibraryScreen extends ConsumerStatefulWidget {
   ConsumerState<MyLibraryScreen> createState() => _MyLibraryScreenState();
 }
 
-class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: ReadingStatus.values.length, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen> {
+  ReadingStatus _selectedStatus = ReadingStatus.reading;
 
   void _openBookDetails(LibraryEntry entry) {
     context.push(
@@ -45,19 +34,14 @@ class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final stream = ref.watch(libraryRepositoryProvider).watchLibrary(
           ref.watch(currentUserProvider)!.uid,
         );
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Library'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: ReadingStatus.values
-              .map((status) => Tab(text: status.label))
-              .toList(),
-        ),
+        title: Text(l10n.myLibrary),
       ),
       body: StreamBuilder<List<LibraryEntry>>(
         stream: stream,
@@ -67,51 +51,68 @@ class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen>
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(l10n.libraryError('${snapshot.error}')),
+            );
           }
 
           final List<LibraryEntry> entries = snapshot.data ?? <LibraryEntry>[];
+          final List<LibraryEntry> filtered = entries
+              .where((LibraryEntry entry) => entry.status == _selectedStatus)
+              .toList();
 
-          return TabBarView(
-            controller: _tabController,
-            children: ReadingStatus.values.map((status) {
-              final List<LibraryEntry> filtered = entries
-                  .where((entry) => entry.status == status)
-                  .toList();
-
-              if (filtered.isEmpty) {
-                return Center(
-                  child: Text('No books in "${status.label}".'),
-                );
-              }
-
-              return ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: filtered.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final LibraryEntry entry = filtered[index];
-                  return LibraryEntryTile(
-                    entry: entry,
-                    onTap: () => showEditLibraryEntrySheet(
-                      context: context,
-                      ref: ref,
-                      workId: entry.workId,
-                      title: entry.title,
-                      authors: entry.authors,
-                      coverUrl: entry.coverUrl,
-                      primarySubject: entry.primarySubject,
-                      numberOfPages: entry.numberOfPages,
-                      existing: entry,
-                    ),
-                    onViewDetails: () => _openBookDetails(entry),
-                    onDelete: () => ref
-                        .read(libraryControllerProvider.notifier)
-                        .deleteEntry(entry.workId),
-                  );
-                },
-              );
-            }).toList(),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                child: PillSegmentedBar<ReadingStatus>(
+                  items: ReadingStatus.values,
+                  selected: _selectedStatus,
+                  onSelected: (ReadingStatus status) {
+                    setState(() => _selectedStatus = status);
+                  },
+                  labelBuilder: (ReadingStatus status) =>
+                      status.localizedLabel(l10n),
+                ),
+              ),
+              Expanded(
+                child: filtered.isEmpty
+                    ? Center(
+                        child: Text(
+                          l10n.libraryEmptyTab(
+                            _selectedStatus.localizedLabel(l10n),
+                          ),
+                        ),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                        itemCount: filtered.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final LibraryEntry entry = filtered[index];
+                          return LibraryEntryTile(
+                            entry: entry,
+                            onTap: () => showEditLibraryEntrySheet(
+                              context: context,
+                              ref: ref,
+                              workId: entry.workId,
+                              title: entry.title,
+                              authors: entry.authors,
+                              coverUrl: entry.coverUrl,
+                              primarySubject: entry.primarySubject,
+                              numberOfPages: entry.numberOfPages,
+                              existing: entry,
+                            ),
+                            onViewDetails: () => _openBookDetails(entry),
+                            onDelete: () => ref
+                                .read(libraryControllerProvider.notifier)
+                                .deleteEntry(entry.workId),
+                          );
+                        },
+                      ),
+              ),
+            ],
           );
         },
       ),

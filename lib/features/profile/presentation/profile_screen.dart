@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../core/providers/locale_notifier.dart';
 import '../../../core/providers/theme_mode_notifier.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../auth/presentation/providers/auth_controller.dart';
 import '../../auth/presentation/providers/auth_providers.dart';
 import '../domain/entities/reading_stats.dart';
@@ -16,6 +20,7 @@ class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   Future<void> _pickAndUploadAvatar(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) => SafeArea(
@@ -23,12 +28,12 @@ class ProfileScreen extends ConsumerWidget {
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Gallery'),
+              title: Text(l10n.gallery),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Camera'),
+              title: Text(l10n.camera),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
           ],
@@ -60,8 +65,7 @@ class ProfileScreen extends ConsumerWidget {
     if (uploadState.hasError) {
       String errorMessage = uploadState.error.toString();
       if (errorMessage.contains('firebase_storage/object-not-found')) {
-        errorMessage =
-            'Error: Profile photo not found in storage. Please ensure Firebase Storage is enabled in the Firebase Console.';
+        errorMessage = l10n.storagePhotoNotFound;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,24 +85,26 @@ class ProfileScreen extends ConsumerWidget {
     final AsyncValue<UserProfile?> profileState = ref.watch(userProfileStreamProvider);
     final ReadingStats stats = ref.watch(readingStatsProvider);
     final ThemeMode themeMode = ref.watch(themeModeNotifierProvider);
+    final Locale locale = ref.watch(localeNotifierProvider);
     final bool isUploading = ref.watch(profileControllerProvider).isLoading;
+    final l10n = context.l10n;
 
     final String email = user?.email ?? '';
     final String? photoUrl = profileState.valueOrNull?.photoUrl;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(l10n.profile),
         actions: <Widget>[
           IconButton(
-            tooltip: 'Sign out',
+            tooltip: l10n.signOut,
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             icon: const Icon(Icons.logout),
           ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: <Widget>[
           Center(
             child: Stack(
@@ -138,46 +144,72 @@ class ProfileScreen extends ConsumerWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 24),
-          Text('Statistics', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: <Widget>[
-                  _StatRow(label: 'Books read', value: '${stats.booksRead}'),
-                  _StatRow(
-                    label: 'Average rating',
-                    value: stats.averageRating == null
-                        ? '—'
-                        : stats.averageRating!.toStringAsFixed(1),
-                  ),
-                  _StatRow(
-                    label: 'Favorite genre',
-                    value: _formatGenre(stats.favoriteGenre),
-                  ),
-                ],
-              ),
+          Text(l10n.statistics, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 10),
+          AppCard(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: <Widget>[
+                _StatRow(label: l10n.booksRead, value: '${stats.booksRead}'),
+                _StatRow(
+                  label: l10n.averageRating,
+                  value: stats.averageRating == null
+                      ? l10n.notAvailable
+                      : stats.averageRating!.toStringAsFixed(1),
+                ),
+                _StatRow(
+                  label: l10n.favoriteGenre,
+                  value: _formatGenre(l10n, stats.favoriteGenre),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
-          Text('Settings', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
-          Card(
-            child: ListTile(
-              leading: Icon(
-                themeMode == ThemeMode.dark
-                    ? Icons.dark_mode_rounded
-                    : Icons.light_mode_rounded,
-              ),
-              title: const Text('Theme'),
-              subtitle: Text(_themeModeLabel(themeMode)),
-              trailing: IconButton(
-                tooltip: 'Toggle theme',
-                onPressed: () =>
-                    ref.read(themeModeNotifierProvider.notifier).toggleTheme(),
-                icon: const Icon(Icons.swap_horiz_rounded),
-              ),
+          Text(l10n.settings, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 10),
+          AppCard(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(l10n.language, style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 12),
+                _LanguageSwitcher(
+                  selected: locale,
+                  onSelected: (Locale value) =>
+                      ref.read(localeNotifierProvider.notifier).setLocale(value),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      themeMode == ThemeMode.dark
+                          ? Icons.dark_mode_rounded
+                          : Icons.light_mode_rounded,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(l10n.theme, style: Theme.of(context).textTheme.titleMedium),
+                          Text(
+                            _themeModeLabel(l10n, themeMode),
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: l10n.toggleTheme,
+                      onPressed: () => ref
+                          .read(themeModeNotifierProvider.notifier)
+                          .toggleTheme(),
+                      icon: const Icon(Icons.swap_horiz_rounded),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
@@ -185,22 +217,85 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  String _formatGenre(String? genre) {
+  String _formatGenre(AppLocalizations l10n, String? genre) {
     if (genre == null || genre.isEmpty || genre == '—') {
-      return '—';
+      return l10n.notAvailable;
     }
     if (genre.contains(':') || genre.length > 20) {
-      return 'Various';
+      return l10n.genreVarious;
     }
     return genre;
   }
 
-  String _themeModeLabel(ThemeMode mode) {
+  String _themeModeLabel(AppLocalizations l10n, ThemeMode mode) {
     return switch (mode) {
-      ThemeMode.light => 'Light',
-      ThemeMode.dark => 'Dark',
-      ThemeMode.system => 'System',
+      ThemeMode.light => l10n.themeLight,
+      ThemeMode.dark => l10n.themeDark,
+      ThemeMode.system => l10n.themeSystem,
     };
+  }
+}
+
+class _LanguageSwitcher extends StatelessWidget {
+  const _LanguageSwitcher({
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final Locale selected;
+  final ValueChanged<Locale> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    final Brightness brightness = Theme.of(context).brightness;
+    final double bubbleOpacity = brightness == Brightness.dark ? 0.22 : 0.18;
+
+    final List<(Locale, String)> options = <(Locale, String)>[
+      (const Locale('en'), l10n.languageEnglish),
+      (const Locale('uk'), l10n.languageUkrainian),
+      (const Locale('pl'), l10n.languagePolish),
+    ];
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: options.map(((Locale, String) option) {
+        final bool isSelected = selected.languageCode == option.$1.languageCode;
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => onSelected(option.$1),
+            borderRadius: BorderRadius.circular(999),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                color: isSelected
+                    ? colors.primary.withValues(alpha: bubbleOpacity)
+                    : colors.surfaceContainerHighest.withValues(
+                        alpha: brightness == Brightness.dark ? 0.35 : 0.75,
+                      ),
+                border: Border.all(
+                  color: colors.outline.withValues(
+                    alpha: isSelected ? 0.3 : 0.12,
+                  ),
+                ),
+              ),
+              child: Text(
+                option.$2,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: isSelected ? colors.primary : colors.onSurface,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }
 

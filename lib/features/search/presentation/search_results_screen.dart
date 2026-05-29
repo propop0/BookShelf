@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/l10n_extensions.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/search_query_display.dart';
 import '../../../core/widgets/book_card.dart';
 import '../../book_catalog/domain/entities/book.dart';
@@ -31,16 +33,21 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<Book>> state = ref.watch(searchBooksNotifierProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(SearchQueryDisplay.appBarTitle(widget.query)),
+        title: Text(SearchQueryDisplay.appBarTitle(l10n, widget.query)),
       ),
-      body: _buildBody(context, state),
+      body: _buildBody(context, state, l10n),
     );
   }
 
-  Widget _buildBody(BuildContext context, AsyncValue<List<Book>> state) {
+  Widget _buildBody(
+    BuildContext context,
+    AsyncValue<List<Book>> state,
+    AppLocalizations l10n,
+  ) {
     return state.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (Object error, _) => Center(
@@ -56,7 +63,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () => ref.read(searchBooksNotifierProvider.notifier).retry(),
-                child: const Text('Retry'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -64,9 +71,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       ),
       data: (List<Book> books) {
         if (books.isEmpty) {
-          return const Center(
-            child: Text('No books found for this query.'),
-          );
+          return Center(child: Text(l10n.noSearchResults));
         }
 
         return RefreshIndicator(
@@ -74,14 +79,16 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: books.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (BuildContext context, int index) {
               final Book book = books[index];
               return BookCard(
                 book: book,
                 onTap: () {
                   final String cover = book.coverUrl ?? '';
-                  final String authors = book.authorsLabel;
+                  final String authors = book.authorNames.isEmpty
+                      ? l10n.unknownAuthor
+                      : book.authorsLabel;
                   context.push(
                     '/details?workId=${Uri.encodeQueryComponent(book.workId)}'
                     '&title=${Uri.encodeQueryComponent(book.title)}'
