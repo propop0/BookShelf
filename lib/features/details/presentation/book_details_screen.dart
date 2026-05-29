@@ -42,7 +42,7 @@ class BookDetailsScreen extends ConsumerWidget {
                   ref: ref,
                   workId: workId,
                   title: details.title,
-                  authors: authors ?? 'Unknown author',
+                  authors: details.authorsLabel,
                   coverUrl: details.coverUrl ?? coverUrl,
                   primarySubject: details.subjects.isNotEmpty
                       ? details.subjects.first
@@ -64,7 +64,7 @@ class BookDetailsScreen extends ConsumerWidget {
   ) {
     return detailsState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(
+      error: (Object error, _) => Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -85,7 +85,7 @@ class BookDetailsScreen extends ConsumerWidget {
           ),
         ),
       ),
-      data: (details) => ListView(
+      data: (BookDetails details) => ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
         children: <Widget>[
           if (details.coverUrl != null && details.coverUrl!.isNotEmpty) ...<Widget>[
@@ -104,7 +104,39 @@ class BookDetailsScreen extends ConsumerWidget {
             details.title,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: <Widget>[
+                  _MetadataRow(
+                    icon: Icons.person_outline,
+                    label: 'Author',
+                    value: details.authorsLabel,
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _MetadataRow(
+                    icon: Icons.calendar_today_outlined,
+                    label: 'Published',
+                    value: details.publishYear?.toString() ?? '—',
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _MetadataRow(
+                    icon: Icons.menu_book_outlined,
+                    label: 'Pages',
+                    value: details.numberOfPages?.toString() ?? '—',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Description',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
           Text(
             details.description,
             style: Theme.of(context).textTheme.bodyLarge,
@@ -121,7 +153,7 @@ class BookDetailsScreen extends ConsumerWidget {
               runSpacing: 8,
               children: details.subjects
                   .take(15)
-                  .map((subject) => Chip(label: Text(subject)))
+                  .map((String subject) => Chip(label: Text(subject)))
                   .toList(),
             ),
           ],
@@ -136,5 +168,26 @@ class BookDetailsScreen extends ConsumerWidget {
       return value.replaceFirst('Exception: ', '');
     }
     return value;
+  }
+}
+
+class _MetadataRow extends StatelessWidget {
+  const _MetadataRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      subtitle: Text(value),
+    );
   }
 }

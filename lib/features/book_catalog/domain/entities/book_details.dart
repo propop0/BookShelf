@@ -7,6 +7,9 @@ class BookDetails {
     required this.description,
     required this.subjects,
     required this.coverId,
+    required this.authorNames,
+    this.publishYear,
+    this.numberOfPages,
   });
 
   final String workId;
@@ -14,6 +17,12 @@ class BookDetails {
   final String description;
   final List<String> subjects;
   final int? coverId;
+  final List<String> authorNames;
+  final int? publishYear;
+  final int? numberOfPages;
+
+  String get authorsLabel =>
+      authorNames.isEmpty ? 'Unknown author' : authorNames.join(', ');
 
   String? get coverUrl =>
       coverId == null ? null : ApiConstants.largeCoverUrl(coverId!);

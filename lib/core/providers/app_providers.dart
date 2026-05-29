@@ -6,6 +6,7 @@ import '../../features/book_catalog/data/datasources/open_library_remote_data_so
 import '../../features/book_catalog/data/repositories/book_repository_impl.dart';
 import '../../features/book_catalog/domain/repositories/book_repository.dart';
 import '../../features/book_catalog/domain/usecases/get_book_details_use_case.dart';
+import '../../features/book_catalog/domain/usecases/get_trending_books_use_case.dart';
 import '../../features/book_catalog/domain/usecases/search_books_use_case.dart';
 import '../network/api_client.dart';
 
@@ -33,6 +34,10 @@ final searchBooksUseCaseProvider = Provider<SearchBooksUseCase>((ref) {
 
 final getBookDetailsUseCaseProvider = Provider<GetBookDetailsUseCase>((ref) {
   return GetBookDetailsUseCase(ref.watch(bookRepositoryProvider));
+});
+
+final getTrendingBooksUseCaseProvider = Provider<GetTrendingBooksUseCase>((ref) {
+  return GetTrendingBooksUseCase(ref.watch(bookRepositoryProvider));
 });
 
 final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {

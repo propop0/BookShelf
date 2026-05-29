@@ -23,6 +23,18 @@ class BookRepositoryImpl implements BookRepository {
   }
 
   @override
+  Future<({List<Book>? data, Failure? failure})> getTrendingBooks() async {
+    try {
+      final List<Book> books = await _remoteDataSource.getTrendingBooks();
+      return (data: books, failure: null);
+    } on AppException catch (exception) {
+      return (data: null, failure: Failure(exception.message));
+    } on Exception {
+      return (data: null, failure: const Failure('Unexpected error occurred.'));
+    }
+  }
+
+  @override
   Future<({BookDetails? data, Failure? failure})> getBookDetails(String workId) async {
     try {
       final BookDetails details = await _remoteDataSource.getBookDetails(workId);

@@ -7,9 +7,18 @@ class BookDetailsModel extends BookDetails {
     required super.description,
     required super.subjects,
     required super.coverId,
+    required super.authorNames,
+    super.publishYear,
+    super.numberOfPages,
   });
 
-  factory BookDetailsModel.fromJson(Map<String, dynamic> json, {required String workId}) {
+  factory BookDetailsModel.fromWorkJson(
+    Map<String, dynamic> json, {
+    required String workId,
+    List<String> authorNames = const <String>[],
+    int? publishYear,
+    int? numberOfPages,
+  }) {
     return BookDetailsModel(
       workId: workId,
       title: (json['title'] as String?)?.trim().isNotEmpty == true
@@ -18,10 +27,13 @@ class BookDetailsModel extends BookDetails {
       description: _parseDescription(json['description']),
       subjects: ((json['subjects'] as List<dynamic>?) ?? <dynamic>[])
           .whereType<String>()
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
+          .map((String subject) => subject.trim())
+          .where((String subject) => subject.isNotEmpty)
           .toList(),
-      coverId: _parseCoverId(json['covers']),
+      coverId: parseCoverId(json['covers']),
+      authorNames: authorNames,
+      publishYear: publishYear ?? parseYear(json['first_publish_date']),
+      numberOfPages: numberOfPages,
     );
   }
 
@@ -31,6 +43,9 @@ class BookDetailsModel extends BookDetails {
       'description': description,
       'subjects': subjects,
       'covers': coverId == null ? <int>[] : <int>[coverId!],
+      'authorNames': authorNames,
+      'publishYear': publishYear,
+      'numberOfPages': numberOfPages,
     };
   }
 
@@ -49,13 +64,36 @@ class BookDetailsModel extends BookDetails {
     return 'No description available.';
   }
 
-  static int? _parseCoverId(Object? rawCovers) {
+  static int? parseCoverId(Object? rawCovers) {
     if (rawCovers is List<dynamic>) {
       for (final Object? item in rawCovers) {
         if (item is int) {
           return item;
         }
       }
+    }
+    return null;
+  }
+
+  static int? parseYear(Object? raw) {
+    if (raw is int) {
+      return raw;
+    }
+    if (raw is String) {
+      final RegExpMatch? match = RegExp(r'(\d{4})').firstMatch(raw);
+      if (match != null) {
+        return int.tryParse(match.group(1)!);
+      }
+    }
+    return null;
+  }
+
+  static int? parsePageCount(Object? raw) {
+    if (raw is int && raw > 0) {
+      return raw;
+    }
+    if (raw is String) {
+      return int.tryParse(raw);
     }
     return null;
   }
