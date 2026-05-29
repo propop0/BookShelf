@@ -67,7 +67,7 @@ The Home screen is your starting point. Browse **Trending Today** books or explo
 | Home & Trending | Results by Category |
 | :---: | :---: |
 | <img src="assets/images/Home Screen with Trending.png" width="300" alt="Home Screen" /> | <img src="assets/images/result by category.png" width="300" alt="Category Results" /> |
-
+ 
 </div>
 
 ---
