@@ -52,7 +52,7 @@ When you first open the app, you'll be greeted by the Login screen.
 - **Login**: Access your existing account.
 - **Password Reset**: If you forget your password, use the "Forgot Password" feature to receive a reset link.
 
-![Screenshot_20260529_222511.png](../../../Pictures/Screenshots/Screenshot_20260529_222511.png)
+![Screenshot_20260529_222511.svg](../../../Downloads/Screenshot_20260529_222511.svg)
 
 ### 2. Discovering Books (Home Screen)
 The Home screen is your starting point for discovery.
