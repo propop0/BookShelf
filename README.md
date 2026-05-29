@@ -71,7 +71,7 @@ The Home screen is your starting point. Browse **Trending Today** books or explo
 </div>
 
 ---
-
+ 
 ### 3. Search Results & Details
 Search results appear instantly. Tap on any book to see its full description, publication year, and subjects with smooth **Hero Animations**.
 
