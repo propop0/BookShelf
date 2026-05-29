@@ -5,11 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('CategoryPill displays label and icon', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: CategoryPill(
             label: 'Fantasy',
             icon: Icons.flash_on,
+            onTap: () {},
           ),
         ),
       ),
