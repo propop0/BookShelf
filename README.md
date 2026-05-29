@@ -47,7 +47,7 @@ A modern, feature-rich Flutter application for book enthusiasts. Search through 
 ## How to Use
 
 ### 1. Authentication
-When you first open the app, you'll be greeted by the Login screen. You can create a new account, sign in, or reset your password.
+When you first open the app, you'll be greeted by the Login screen. You can create a new account using the **Register Screen**, sign in, or reset your password.
 
 <div align="center">
 
@@ -60,7 +60,7 @@ When you first open the app, you'll be greeted by the Login screen. You can crea
 ---
 
 ### 2. Discovering Books (Home Screen)
-The Home screen is your starting point. Browse **Trending Today** books, explore **Popular Categories**, or use the search bar.
+The Home screen is your starting point. Browse **Trending Today** books or explore **Popular Categories** (like Fantasy, Science, History) to see books filtered by genre. Use the search bar to find books by title or author.
 
 <div align="center">
 
@@ -86,7 +86,7 @@ Search by title or author. Tap on any book to see its full description, publicat
 ---
 
 ### 4. Personal Library
-Manage your books in the "My Library" tab. Categorize them as **Reading**, **Read**, or **Want to read**. Track your progress and leave ratings.
+Manage your books in the "My Library" tab. Categorize them as **Reading**, **Read**, or **Want to read**. Track your progress with animated progress bars and leave ratings/reviews.
 
 <div align="center">
 
@@ -99,7 +99,7 @@ Manage your books in the "My Library" tab. Categorize them as **Reading**, **Rea
 ---
 
 ### 5. Profile & Settings
-Customize your experience. Upload a profile photo, view reading stats, change the language, or toggle themes.
+Customize your experience. View reading stats, change the language, or toggle themes. Use the **Profile Photo Menu** to upload a new avatar from your **Gallery** or **Camera**.
 
 <div align="center">
 
