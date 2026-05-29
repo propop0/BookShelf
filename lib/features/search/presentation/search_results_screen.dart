@@ -73,14 +73,19 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: books.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (BuildContext context, int index) {
               final Book book = books[index];
               return BookCard(
                 book: book,
                 onTap: () {
+                  final String cover = book.coverUrl ?? '';
+                  final String authors = book.authorsLabel;
                   context.push(
-                    '/details?workId=${Uri.encodeQueryComponent(book.workId)}&title=${Uri.encodeQueryComponent(book.title)}',
+                    '/details?workId=${Uri.encodeQueryComponent(book.workId)}'
+                    '&title=${Uri.encodeQueryComponent(book.title)}'
+                    '&coverUrl=${Uri.encodeQueryComponent(cover)}'
+                    '&authors=${Uri.encodeQueryComponent(authors)}',
                   );
                 },
               );

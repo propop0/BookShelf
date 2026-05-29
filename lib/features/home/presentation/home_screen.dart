@@ -73,11 +73,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 icon: const Icon(Icons.search),
                 label: const Text('Search'),
               ),
-              const SizedBox(height: 20),
-              Text(
-                'This screen currently covers Phase 2 requirements: form validation and API search entry point.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
             ],
           ),
         ),
