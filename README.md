@@ -4,101 +4,132 @@ A modern, feature-rich Flutter application for book enthusiasts. Search through 
 
 ## Tech Stack
 
-- **Framework**: [Flutter](https://flutter.dev/) (3.24+)
-- **State Management**: [Riverpod](https://riverpod.dev/) (2.6+)
-- **Backend**: [Firebase](https://firebase.google.com/) (Auth, Firestore, Storage)
-- **Navigation**: [GoRouter](https://pub.dev/packages/go_router)
-- **Architecture**: Clean Architecture (Feature-first organization)
-- **API**: [Open Library API](https://openlibrary.org/developers/api)
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **Flutter** | 3.24+ | UI Framework |
+| **Riverpod** | 2.6+ | State Management |
+| **Firebase** | Latest | Auth, Firestore, Storage |
+| **GoRouter** | Latest | Navigation |
+| **Architecture** | Clean | Feature-first organization |
+| **API** | [Open Library](https://openlibrary.org/developers/api) | Book Metadata |
+
+---
 
 ## Getting Started
 
 ### Prerequisites
-
 - Flutter SDK (latest stable version)
 - Dart SDK
 - A Firebase project (configured for Android/iOS/Web)
 
 ### Setup
-
 1.  **Clone the repository**:
     ```bash
     git clone https://github.com/your-username/bookshelf.git
     cd bookshelf
     ```
-
 2.  **Install dependencies**:
     ```bash
     flutter pub get
     ```
-
 3.  **Configure Firebase**:
     - Use [FlutterFire CLI](https://firebase.google.com/docs/flutter/setup) to configure your Firebase project:
       ```bash
       flutterfire configure
       ```
-    - Ensure `firebase_options.dart` is generated in `lib/`.
-
 4.  **Run the app**:
     ```bash
     flutter run
     ```
 
+---
+
 ## How to Use
 
 ### 1. Authentication
-When you first open the app, you'll be greeted by the Login screen.
-- **Sign Up**: Create a new account using your email and password.
-- **Login**: Access your existing account.
-- **Password Reset**: If you forget your password, use the "Forgot Password" feature to receive a reset link.
+When you first open the app, you'll be greeted by the Login screen. You can create a new account, sign in, or reset your password.
 
-![Login Screen](assets/images/login.png)
+<div align="center">
+
+| Login Screen |
+| :---: |
+| <img src="assets/images/login.png" width="300" alt="Login Screen" /> |
+
+</div>
+
+---
 
 ### 2. Discovering Books (Home Screen)
-The Home screen is your starting point for discovery.
-- **Trending**: Browse books that are currently popular.
-- **Categories**: Explore books by genres like Fantasy, Science Fiction, History, and more.
-- **Search**: Use the search bar to find books by title or author.
+The Home screen is your starting point. Browse **Trending Today** books, explore **Popular Categories**, or use the search bar.
 
-[Insert Screenshot Here: Home Screen with Trending]
+<div align="center">
+
+| Home & Trending |
+| :---: |
+| <img src="assets/images/home.png" width="300" alt="Home Screen" /> |
+
+</div>
+
+---
 
 ### 3. Search Results & Details
-- **Search Results**: View a list of books matching your query.
-- **Book Details**: Tap on any book to see its full description, author information, publication year, and related subjects.
-- **Hero Animations**: Enjoy smooth transitions as book covers fly between screens.
+Search by title or author. Tap on any book to see its full description, publication year, and subjects with smooth **Hero Animations**.
 
-[Insert Screenshot Here: Book Details Screen]
+<div align="center">
+
+| Search Results | Book Details |
+| :---: | :---: |
+| <img src="assets/images/search.png" width="300" alt="Search Results" /> | <img src="assets/images/details.png" width="300" alt="Book Details" /> |
+
+</div>
+
+---
 
 ### 4. Personal Library
-Manage your reading list in the "My Library" tab.
-- **Add to Library**: From the Book Details screen, tap "Add to Library".
-- **Status Tracking**: Categorize books as "Reading", "Read", or "Want to read".
-- **Reading Progress**: For books you are currently "Reading", track your progress by updating your current page. The app will calculate your percentage automatically.
-- **Ratings & Reviews**: Leave a rating (1-10) and a short review for books you've read.
+Manage your books in the "My Library" tab. Categorize them as **Reading**, **Read**, or **Want to read**. Track your progress and leave ratings.
 
-[Insert Screenshot Here: My Library with Progress Bars]
-[Insert Screenshot Here: Editing Book Progress]
+<div align="center">
+
+| My Library | Editing Progress |
+| :---: | :---: |
+| <img src="assets/images/library.png" width="300" alt="Library List" /> | <img src="assets/images/edit.png" width="300" alt="Edit Entry" /> |
+
+</div>
+
+---
 
 ### 5. Profile & Settings
-Customize your experience in the Profile tab.
-- **Profile Photo**: Upload or change your profile picture using your camera or gallery (stored in Firebase Storage).
-- **Statistics**: View your reading stats, including books read, average rating, and favorite genre.
-- **Dark/Light Theme**: Toggle between light and dark modes to suit your preference.
-- **Localization**: Change the app language (available in English, Ukrainian, and Polish).
+Customize your experience. Upload a profile photo, view reading stats, change the language, or toggle themes.
 
-[Insert Screenshot Here: Profile Screen]
+<div align="center">
+
+| Profile Screen | Settings / Language |
+| :---: | :---: |
+| <img src="assets/images/profile.png" width="300" alt="Profile Screen" /> | <img src="assets/images/settings.png" width="300" alt="Settings Screen" /> |
+
+</div>
+
+---
+
+## Theme & Localization Support
+
+The app fully supports **Light** and **Dark** modes, along with localization for **English**, **Ukrainian**, and **Polish**.
+
+<div align="center">
+
+| Dark: Home | Dark: Library | Dark: Profile |
+| :---: | :---: | :---: |
+| <img src="assets/images/dark_home.png" width="250" alt="Dark Home" /> | <img src="assets/images/dark_library.png" width="250" alt="Dark Library" /> | <img src="assets/images/dark_profile.png" width="250" alt="Dark Profile" /> |
+
+</div>
+
+---
 
 ## Features Implementation Details
 
-- **Animations**: Uses `Hero` animations for covers and `FadeInAnimation` for list items to provide a polished UX.
-- **Clean Architecture**: Decoupled layers (Domain, Data, Presentation) for better maintainability and testability.
-- **Responsive Layout**: Designed to look great on various screen sizes using Material Design 3.
-
-## Testing
-
-The project includes a comprehensive test suite:
-- **Unit Tests**: Logic for stats calculation, progress tracking, and model parsing.
-- **Widget Tests**: Verification of core UI components like cards and pills.
+-   **Clean Architecture**: Features are organized into Domain, Data, and Presentation layers.
+-   **Animations**: Uses `Hero` animations for covers and `FadeInAnimation` for staggered list items.
+-   **Testing**: Includes 13 Unit Tests and 4 Widget Tests for core logic and UI components.
 
 Run tests using:
 ```bash
