@@ -8,6 +8,7 @@ import '../../../core/utils/search_query_display.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/book_card.dart';
 import '../../../core/widgets/category_pill.dart';
+import '../../../core/widgets/fade_in_animation.dart';
 import '../../book_catalog/domain/entities/book.dart';
 import '../../search/presentation/providers/search_providers.dart';
 import '../domain/constants/book_categories.dart';
@@ -59,12 +60,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     context.push('/search?q=${Uri.encodeQueryComponent(category.searchQuery)}');
   }
 
-  void _openBookDetails(Book book) {
+  void _openBookDetails(Book book, String heroTag) {
     context.push(
       '/details?workId=${Uri.encodeQueryComponent(book.workId)}'
       '&title=${Uri.encodeQueryComponent(book.title)}'
       '&coverUrl=${Uri.encodeQueryComponent(book.coverUrl ?? '')}'
-      '&authors=${Uri.encodeQueryComponent(book.authorsLabel)}',
+      '&authors=${Uri.encodeQueryComponent(book.authorsLabel)}'
+      '&heroTag=${Uri.encodeQueryComponent(heroTag)}',
     );
   }
 
@@ -142,10 +144,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               itemCount: popularBookCategories.length,
               itemBuilder: (BuildContext context, int index) {
                 final BookCategory category = popularBookCategories[index];
-                return CategoryPill(
-                  label: category.localizedLabel(l10n),
-                  icon: category.icon,
-                  onTap: () => _openCategory(category),
+                return FadeInAnimation(
+                  delay: Duration(milliseconds: index * 40),
+                  child: CategoryPill(
+                    label: category.localizedLabel(l10n),
+                    icon: category.icon,
+                    onTap: () => _openCategory(category),
+                  ),
                 );
               },
             ),
@@ -157,7 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 12),
             _TrendingSection(
               trendingState: trendingState,
-              onBookTap: _openBookDetails,
+              onBookTap: (book) => _openBookDetails(book, 'trending_${book.workId}'),
               onRetry: () => ref.invalidate(trendingBooksProvider),
             ),
           ],
@@ -222,11 +227,16 @@ class _TrendingSection extends StatelessWidget {
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (BuildContext context, int index) {
               final Book book = books[index];
-              return SizedBox(
-                width: 300,
-                child: BookCard(
-                  book: book,
-                  onTap: () => onBookTap(book),
+              final String heroTag = 'trending_${book.workId}';
+              return FadeInAnimation(
+                delay: Duration(milliseconds: index * 50),
+                child: SizedBox(
+                  width: 300,
+                  child: BookCard(
+                    heroTag: heroTag,
+                    book: book,
+                    onTap: () => onBookTap(book),
+                  ),
                 ),
               );
             },

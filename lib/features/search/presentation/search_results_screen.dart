@@ -6,6 +6,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/utils/search_query_display.dart';
 import '../../../core/widgets/book_card.dart';
+import '../../../core/widgets/fade_in_animation.dart';
 import '../../book_catalog/domain/entities/book.dart';
 import 'providers/search_books_notifier.dart';
 
@@ -82,20 +83,26 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
             separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (BuildContext context, int index) {
               final Book book = books[index];
-              return BookCard(
-                book: book,
-                onTap: () {
-                  final String cover = book.coverUrl ?? '';
-                  final String authors = book.authorNames.isEmpty
-                      ? l10n.unknownAuthor
-                      : book.authorsLabel;
-                  context.push(
-                    '/details?workId=${Uri.encodeQueryComponent(book.workId)}'
-                    '&title=${Uri.encodeQueryComponent(book.title)}'
-                    '&coverUrl=${Uri.encodeQueryComponent(cover)}'
-                    '&authors=${Uri.encodeQueryComponent(authors)}',
-                  );
-                },
+              final String heroTag = 'search_${book.workId}';
+              return FadeInAnimation(
+                delay: Duration(milliseconds: index * 50),
+                child: BookCard(
+                  heroTag: heroTag,
+                  book: book,
+                  onTap: () {
+                    final String cover = book.coverUrl ?? '';
+                    final String authors = book.authorNames.isEmpty
+                        ? l10n.unknownAuthor
+                        : book.authorsLabel;
+                    context.push(
+                      '/details?workId=${Uri.encodeQueryComponent(book.workId)}'
+                      '&title=${Uri.encodeQueryComponent(book.title)}'
+                      '&coverUrl=${Uri.encodeQueryComponent(cover)}'
+                      '&authors=${Uri.encodeQueryComponent(authors)}'
+                      '&heroTag=${Uri.encodeQueryComponent(heroTag)}',
+                    );
+                  },
+                ),
               );
             },
           ),

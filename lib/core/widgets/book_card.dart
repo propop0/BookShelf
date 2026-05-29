@@ -9,10 +9,12 @@ class BookCard extends StatelessWidget {
     super.key,
     required this.book,
     this.onTap,
+    this.heroTag,
   });
 
   final Book book;
   final VoidCallback? onTap;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class BookCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: <Widget>[
-          _BookCover(url: book.coverUrl),
+          _BookCover(url: book.coverUrl, heroTag: heroTag),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -63,9 +65,10 @@ class BookCard extends StatelessWidget {
 }
 
 class _BookCover extends StatelessWidget {
-  const _BookCover({required this.url});
+  const _BookCover({required this.url, this.heroTag});
 
   final String? url;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +79,7 @@ class _BookCover extends StatelessWidget {
       );
     }
 
-    return ClipRRect(
+    Widget image = ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Image.network(
         coverUrl,
@@ -90,6 +93,15 @@ class _BookCover extends StatelessWidget {
         },
       ),
     );
+
+    if (heroTag != null) {
+      image = Hero(
+        tag: heroTag!,
+        child: image,
+      );
+    }
+
+    return image;
   }
 }
 

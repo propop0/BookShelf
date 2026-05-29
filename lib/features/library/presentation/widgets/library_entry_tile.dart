@@ -17,12 +17,14 @@ class LibraryEntryTile extends ConsumerWidget {
     required this.onTap,
     required this.onViewDetails,
     required this.onDelete,
+    this.heroTag,
   });
 
   final LibraryEntry entry;
   final VoidCallback onTap;
   final VoidCallback onViewDetails;
   final VoidCallback onDelete;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,7 +53,7 @@ class LibraryEntryTile extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _Cover(url: entry.coverUrl),
+          _Cover(url: entry.coverUrl, heroTag: heroTag),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -138,9 +140,10 @@ class LibraryEntryTile extends ConsumerWidget {
 }
 
 class _Cover extends StatelessWidget {
-  const _Cover({required this.url});
+  const _Cover({required this.url, this.heroTag});
 
   final String? url;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +151,15 @@ class _Cover extends StatelessWidget {
     if (coverUrl == null || coverUrl.isEmpty) {
       return const CircleAvatar(child: Icon(Icons.menu_book));
     }
-    return ClipRRect(
+    Widget image = ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Image.network(coverUrl, width: 48, height: 64, fit: BoxFit.cover),
     );
+
+    if (heroTag != null) {
+      image = Hero(tag: heroTag!, child: image);
+    }
+
+    return image;
   }
 }

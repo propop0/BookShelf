@@ -112,12 +112,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final String? coverUrl = state.uri.queryParameters['coverUrl'];
           final String? authors = state.uri.queryParameters['authors'];
           final String? subject = state.uri.queryParameters['subject'];
+          final String? heroTag = state.uri.queryParameters['heroTag'];
           return BookDetailsScreen(
             workId: workId,
             fallbackTitle: title,
             coverUrl: coverUrl,
             authors: authors,
             primarySubject: subject,
+            heroTag: heroTag,
           );
         },
       ),

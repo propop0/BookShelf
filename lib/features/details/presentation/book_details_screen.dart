@@ -16,6 +16,7 @@ class BookDetailsScreen extends ConsumerWidget {
     this.coverUrl,
     this.authors,
     this.primarySubject,
+    this.heroTag,
   });
 
   final String workId;
@@ -23,6 +24,7 @@ class BookDetailsScreen extends ConsumerWidget {
   final String? coverUrl;
   final String? authors;
   final String? primarySubject;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,6 +34,8 @@ class BookDetailsScreen extends ConsumerWidget {
     );
     final String appBarTitle =
         detailsState.value?.title ?? fallbackTitle ?? l10n.bookDetails;
+
+    final String effectiveHeroTag = heroTag ?? workId;
 
     return Scaffold(
       appBar: AppBar(
@@ -99,17 +103,22 @@ class BookDetailsScreen extends ConsumerWidget {
             ? l10n.unknownAuthor
             : details.authorsLabel;
 
+        final String? effectiveCoverUrl = details.coverUrl ?? coverUrl;
+
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
           children: <Widget>[
-            if (details.coverUrl != null && details.coverUrl!.isNotEmpty) ...<Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  details.coverUrl!,
-                  height: 280,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+            if (effectiveCoverUrl != null && effectiveCoverUrl.isNotEmpty) ...<Widget>[
+              Hero(
+                tag: effectiveHeroTag,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    effectiveCoverUrl,
+                    height: 280,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),

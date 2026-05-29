@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/widgets/fade_in_animation.dart';
 import '../../../core/widgets/pill_segmented_bar.dart';
 import '../../auth/presentation/providers/auth_providers.dart';
 import '../domain/entities/library_entry.dart';
@@ -22,13 +23,14 @@ class MyLibraryScreen extends ConsumerStatefulWidget {
 class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen> {
   ReadingStatus _selectedStatus = ReadingStatus.reading;
 
-  void _openBookDetails(LibraryEntry entry) {
+  void _openBookDetails(LibraryEntry entry, String heroTag) {
     context.push(
       '/details?workId=${Uri.encodeQueryComponent(entry.workId)}'
       '&title=${Uri.encodeQueryComponent(entry.title)}'
       '&coverUrl=${Uri.encodeQueryComponent(entry.coverUrl ?? '')}'
       '&authors=${Uri.encodeQueryComponent(entry.authors)}'
-      '${entry.primarySubject != null ? '&subject=${Uri.encodeQueryComponent(entry.primarySubject!)}' : ''}',
+      '${entry.primarySubject != null ? '&subject=${Uri.encodeQueryComponent(entry.primarySubject!)}' : ''}'
+      '&heroTag=${Uri.encodeQueryComponent(heroTag)}',
     );
   }
 
@@ -91,23 +93,28 @@ class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen> {
                         separatorBuilder: (_, _) => const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           final LibraryEntry entry = filtered[index];
-                          return LibraryEntryTile(
-                            entry: entry,
-                            onTap: () => showEditLibraryEntrySheet(
-                              context: context,
-                              ref: ref,
-                              workId: entry.workId,
-                              title: entry.title,
-                              authors: entry.authors,
-                              coverUrl: entry.coverUrl,
-                              primarySubject: entry.primarySubject,
-                              numberOfPages: entry.numberOfPages,
-                              existing: entry,
+                          final String heroTag = 'lib_${entry.workId}';
+                          return FadeInAnimation(
+                            delay: Duration(milliseconds: index * 50),
+                            child: LibraryEntryTile(
+                              heroTag: heroTag,
+                              entry: entry,
+                              onTap: () => showEditLibraryEntrySheet(
+                                context: context,
+                                ref: ref,
+                                workId: entry.workId,
+                                title: entry.title,
+                                authors: entry.authors,
+                                coverUrl: entry.coverUrl,
+                                primarySubject: entry.primarySubject,
+                                numberOfPages: entry.numberOfPages,
+                                existing: entry,
+                              ),
+                              onViewDetails: () => _openBookDetails(entry, heroTag),
+                              onDelete: () => ref
+                                  .read(libraryControllerProvider.notifier)
+                                  .deleteEntry(entry.workId),
                             ),
-                            onViewDetails: () => _openBookDetails(entry),
-                            onDelete: () => ref
-                                .read(libraryControllerProvider.notifier)
-                                .deleteEntry(entry.workId),
                           );
                         },
                       ),
