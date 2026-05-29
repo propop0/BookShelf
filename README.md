@@ -60,26 +60,26 @@ When you first open the app, you'll be greeted by the Login screen. You can crea
 ---
 
 ### 2. Discovering Books (Home Screen)
-The Home screen is your starting point. Browse **Trending Today** books or explore **Popular Categories** (like Fantasy, Science, History) to see books filtered by genre. Use the search bar to find books by title or author.
+The Home screen is your starting point. Browse **Trending Today** books or explore **Popular Categories** to see books filtered by genre. Use the search bar to find books by title or author.
 
 <div align="center">
 
-| Home & Trending |
-| :---: |
-| <img src="assets/images/Home Screen with Trending.png" width="300" alt="Home Screen" /> |
+| Home & Trending | Results by Category |
+| :---: | :---: |
+| <img src="assets/images/Home Screen with Trending.png" width="300" alt="Home Screen" /> | <img src="assets/images/result by category.png" width="300" alt="Category Results" /> |
 
 </div>
 
 ---
 
 ### 3. Search Results & Details
-Search by title or author. Tap on any book to see its full description, publication year, and subjects with smooth **Hero Animations**.
+Search results appear instantly. Tap on any book to see its full description, publication year, and subjects with smooth **Hero Animations**.
 
 <div align="center">
 
-| Book Details |
-| :---: |
-| <img src="assets/images/Book Details Screen.png" width="300" alt="Book Details" /> |
+| Search Results | Book Details |
+| :---: | :---: |
+| <img src="assets/images/result by search.png" width="300" alt="Search Results" /> | <img src="assets/images/Book Details Screen.png" width="300" alt="Book Details" /> |
 
 </div>
 
@@ -103,9 +103,9 @@ Customize your experience. View reading stats, change the language, or toggle th
 
 <div align="center">
 
-| Profile Screen |
-| :---: |
-| <img src="assets/images/Profile Screen.png" width="300" alt="Profile Screen" /> |
+| Profile Screen | Photo Source Menu |
+| :---: | :---: |
+| <img src="assets/images/Profile Screen.png" width="300" alt="Profile Screen" /> | <img src="assets/images/changing pfp menu.png" width="300" alt="Change Photo Menu" /> |
 
 </div>
 
