@@ -78,7 +78,7 @@ class _BookCover extends StatelessWidget {
         width: 72,
         height: 96,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) {
+        errorBuilder: (_, _, _) {
           return _PlaceholderCover(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           );
