@@ -10,6 +10,7 @@ class LibraryEntry {
     this.rating,
     this.review,
     this.currentPage,
+    this.numberOfPages,
     this.primarySubject,
     this.updatedAt,
   });
@@ -22,6 +23,7 @@ class LibraryEntry {
   final int? rating;
   final String? review;
   final int? currentPage;
+  final int? numberOfPages;
   final String? primarySubject;
   final DateTime? updatedAt;
 }

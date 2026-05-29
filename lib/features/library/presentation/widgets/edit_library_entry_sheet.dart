@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/library_entry.dart';
 import '../../domain/entities/reading_status.dart';
@@ -13,6 +14,7 @@ Future<void> showEditLibraryEntrySheet({
   required String authors,
   String? coverUrl,
   String? primarySubject,
+  int? numberOfPages,
   LibraryEntry? existing,
 }) {
   return showModalBottomSheet<void>(
@@ -25,6 +27,7 @@ Future<void> showEditLibraryEntrySheet({
         authors: authors,
         coverUrl: coverUrl,
         primarySubject: primarySubject,
+        numberOfPages: numberOfPages,
         existing: existing,
       );
     },
@@ -38,6 +41,7 @@ class _EditLibraryEntrySheet extends ConsumerStatefulWidget {
     required this.authors,
     this.coverUrl,
     this.primarySubject,
+    this.numberOfPages,
     this.existing,
   });
 
@@ -46,6 +50,7 @@ class _EditLibraryEntrySheet extends ConsumerStatefulWidget {
   final String authors;
   final String? coverUrl;
   final String? primarySubject;
+  final int? numberOfPages;
   final LibraryEntry? existing;
 
   @override
@@ -57,6 +62,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
   late ReadingStatus _status;
   late final TextEditingController _reviewController;
   late final TextEditingController _pageController;
+  late final TextEditingController _totalPagesController;
   late final TextEditingController _ratingController;
 
   @override
@@ -67,6 +73,9 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
     _pageController = TextEditingController(
       text: widget.existing?.currentPage?.toString() ?? '',
     );
+    _totalPagesController = TextEditingController(
+      text: (widget.existing?.numberOfPages ?? widget.numberOfPages)?.toString() ?? '',
+    );
     _ratingController = TextEditingController(
       text: widget.existing?.rating?.toString() ?? '',
     );
@@ -76,8 +85,20 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
   void dispose() {
     _reviewController.dispose();
     _pageController.dispose();
+    _totalPagesController.dispose();
     _ratingController.dispose();
     super.dispose();
+  }
+
+  void _openBookDetails() {
+    Navigator.of(context).pop();
+    context.push(
+      '/details?workId=${Uri.encodeQueryComponent(widget.workId)}'
+      '&title=${Uri.encodeQueryComponent(widget.title)}'
+      '&coverUrl=${Uri.encodeQueryComponent(widget.coverUrl ?? '')}'
+      '&authors=${Uri.encodeQueryComponent(widget.authors)}'
+      '${widget.primarySubject != null ? '&subject=${Uri.encodeQueryComponent(widget.primarySubject!)}' : ''}',
+    );
   }
 
   Future<void> _save() async {
@@ -87,6 +108,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
 
     final int? rating = int.tryParse(_ratingController.text.trim());
     final int? page = int.tryParse(_pageController.text.trim());
+    final int? totalPages = int.tryParse(_totalPagesController.text.trim());
 
     final LibraryEntry entry = LibraryEntry(
       workId: widget.workId,
@@ -97,6 +119,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
       rating: rating,
       review: _reviewController.text.trim().isEmpty ? null : _reviewController.text.trim(),
       currentPage: page,
+      numberOfPages: totalPages,
       primarySubject: widget.primarySubject ?? widget.existing?.primarySubject,
     );
 
@@ -138,6 +161,12 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
               Text(
                 widget.existing == null ? 'Add to library' : 'Edit library entry',
                 style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _openBookDetails,
+                icon: const Icon(Icons.open_in_new),
+                label: const Text('View details'),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<ReadingStatus>(
@@ -188,6 +217,37 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   labelText: 'Current page',
                   border: OutlineInputBorder(),
                 ),
+                validator: (value) {
+                  final String text = (value ?? '').trim();
+                  if (text.isEmpty) {
+                    return null;
+                  }
+                  final int? page = int.tryParse(text);
+                  if (page == null || page < 1) {
+                    return 'Enter a valid page number.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _totalPagesController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Total pages (optional)',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  final String text = (value ?? '').trim();
+                  if (text.isEmpty) {
+                    return null;
+                  }
+                  final int? pages = int.tryParse(text);
+                  if (pages == null || pages < 1) {
+                    return 'Enter a valid total page count.';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
               TextFormField(

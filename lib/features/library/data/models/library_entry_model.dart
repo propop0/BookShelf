@@ -13,6 +13,7 @@ class LibraryEntryModel extends LibraryEntry {
     super.rating,
     super.review,
     super.currentPage,
+    super.numberOfPages,
     super.primarySubject,
     super.updatedAt,
   });
@@ -30,6 +31,7 @@ class LibraryEntryModel extends LibraryEntry {
       rating: data['rating'] as int?,
       review: data['review'] as String?,
       currentPage: data['currentPage'] as int?,
+      numberOfPages: data['numberOfPages'] as int?,
       primarySubject: data['primarySubject'] as String?,
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -45,6 +47,7 @@ class LibraryEntryModel extends LibraryEntry {
       'rating': rating,
       'review': review,
       'currentPage': currentPage,
+      'numberOfPages': numberOfPages,
       'primarySubject': primarySubject,
       'updatedAt': FieldValue.serverTimestamp(),
     };

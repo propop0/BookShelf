@@ -47,6 +47,7 @@ class BookDetailsScreen extends ConsumerWidget {
                   primarySubject: details.subjects.isNotEmpty
                       ? details.subjects.first
                       : primarySubject,
+                  numberOfPages: details.numberOfPages,
                 );
               },
               icon: const Icon(Icons.library_add_outlined),

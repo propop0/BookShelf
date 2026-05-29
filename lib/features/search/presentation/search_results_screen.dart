@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/utils/search_query_display.dart';
 import '../../../core/widgets/book_card.dart';
 import '../../book_catalog/domain/entities/book.dart';
 import 'providers/search_books_notifier.dart';
@@ -33,7 +34,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Results: "${widget.query}"'),
+        title: Text(SearchQueryDisplay.appBarTitle(widget.query)),
       ),
       body: _buildBody(context, state),
     );
@@ -42,7 +43,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   Widget _buildBody(BuildContext context, AsyncValue<List<Book>> state) {
     return state.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(
+      error: (Object error, _) => Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -61,7 +62,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           ),
         ),
       ),
-      data: (books) {
+      data: (List<Book> books) {
         if (books.isEmpty) {
           return const Center(
             child: Text('No books found for this query.'),

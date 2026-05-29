@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/error/failure.dart';
-import '../../../../core/providers/app_providers.dart';
 import '../../../book_catalog/domain/entities/book.dart';
-import '../../../book_catalog/domain/usecases/search_books_use_case.dart';
+import '../../domain/usecases/search_books_use_case.dart';
+import 'search_providers.dart';
 
 final searchBooksNotifierProvider =
     AutoDisposeAsyncNotifierProvider<SearchBooksNotifier, List<Book>>(
@@ -24,7 +24,7 @@ class SearchBooksNotifier extends AutoDisposeAsyncNotifier<List<Book>> {
 
   String get lastQuery => _lastQuery;
 
-  Future<void> search(String query) async {
+  Future<void> search(String query, {bool forceRefresh = false}) async {
     final String trimmed = query.trim();
     if (trimmed.isEmpty) {
       state = AsyncError<List<Book>>(
@@ -39,6 +39,7 @@ class SearchBooksNotifier extends AutoDisposeAsyncNotifier<List<Book>> {
 
     final ({List<Book>? data, Failure? failure}) result = await _searchBooksUseCase(
       trimmed,
+      forceRefresh: forceRefresh,
     );
 
     if (result.failure != null) {
@@ -52,9 +53,9 @@ class SearchBooksNotifier extends AutoDisposeAsyncNotifier<List<Book>> {
     state = AsyncData<List<Book>>(result.data ?? <Book>[]);
   }
 
-  Future<void> retry() async {
+  Future<void> retry({bool forceRefresh = true}) async {
     if (_lastQuery.isNotEmpty) {
-      await search(_lastQuery);
+      await search(_lastQuery, forceRefresh: forceRefresh);
     }
   }
 }

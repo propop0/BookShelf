@@ -29,6 +29,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
         rating: entry.rating,
         review: entry.review,
         currentPage: entry.currentPage,
+        numberOfPages: entry.numberOfPages,
         primarySubject: entry.primarySubject,
         updatedAt: entry.updatedAt,
       ),

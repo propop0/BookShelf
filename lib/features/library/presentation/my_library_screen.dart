@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../auth/presentation/providers/auth_providers.dart';
 import '../domain/entities/library_entry.dart';
@@ -30,6 +31,16 @@ class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _openBookDetails(LibraryEntry entry) {
+    context.push(
+      '/details?workId=${Uri.encodeQueryComponent(entry.workId)}'
+      '&title=${Uri.encodeQueryComponent(entry.title)}'
+      '&coverUrl=${Uri.encodeQueryComponent(entry.coverUrl ?? '')}'
+      '&authors=${Uri.encodeQueryComponent(entry.authors)}'
+      '${entry.primarySubject != null ? '&subject=${Uri.encodeQueryComponent(entry.primarySubject!)}' : ''}',
+    );
   }
 
   @override
@@ -90,8 +101,10 @@ class _MyLibraryScreenState extends ConsumerState<MyLibraryScreen>
                       authors: entry.authors,
                       coverUrl: entry.coverUrl,
                       primarySubject: entry.primarySubject,
+                      numberOfPages: entry.numberOfPages,
                       existing: entry,
                     ),
+                    onViewDetails: () => _openBookDetails(entry),
                     onDelete: () => ref
                         .read(libraryControllerProvider.notifier)
                         .deleteEntry(entry.workId),

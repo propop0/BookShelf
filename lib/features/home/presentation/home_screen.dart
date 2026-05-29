@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/api_constants.dart';
+import '../../../core/utils/search_query_display.dart';
 import '../../../core/widgets/book_card.dart';
 import '../../book_catalog/domain/entities/book.dart';
+import '../../search/presentation/providers/search_providers.dart';
 import '../domain/constants/book_categories.dart';
 import 'providers/trending_books_provider.dart';
 
@@ -18,6 +20,21 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _queryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future<void>.microtask(_restoreLastSearchQuery);
+  }
+
+  Future<void> _restoreLastSearchQuery() async {
+    final String? query =
+        await ref.read(searchCacheRepositoryProvider).getLastSearchQuery();
+    if (!mounted || query == null || SearchQueryDisplay.isSubjectQuery(query)) {
+      return;
+    }
+    _queryController.text = query;
+  }
 
   @override
   void dispose() {
