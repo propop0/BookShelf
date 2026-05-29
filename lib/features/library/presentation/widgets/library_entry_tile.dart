@@ -47,12 +47,13 @@ class _Cover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (url == null) {
+    final String? coverUrl = url;
+    if (coverUrl == null || coverUrl.isEmpty) {
       return const CircleAvatar(child: Icon(Icons.menu_book));
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: Image.network(url!, width: 48, height: 64, fit: BoxFit.cover),
+      child: Image.network(coverUrl, width: 48, height: 64, fit: BoxFit.cover),
     );
   }
 }

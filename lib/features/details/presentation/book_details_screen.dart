@@ -88,7 +88,7 @@ class BookDetailsScreen extends ConsumerWidget {
       data: (details) => ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
         children: <Widget>[
-          if (details.coverUrl != null) ...<Widget>[
+          if (details.coverUrl != null && details.coverUrl!.isNotEmpty) ...<Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(

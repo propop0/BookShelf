@@ -154,7 +154,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   _StatRow(
                     label: 'Favorite genre',
-                    value: stats.favoriteGenre ?? '—',
+                    value: _formatGenre(stats.favoriteGenre),
                   ),
                 ],
               ),
@@ -185,6 +185,16 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
+  String _formatGenre(String? genre) {
+    if (genre == null || genre.isEmpty || genre == '—') {
+      return '—';
+    }
+    if (genre.contains(':') || genre.length > 20) {
+      return 'Various';
+    }
+    return genre;
+  }
+
   String _themeModeLabel(ThemeMode mode) {
     return switch (mode) {
       ThemeMode.light => 'Light',
@@ -205,10 +215,17 @@ class _StatRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(label),
-          Text(value, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
         ],
       ),
     );

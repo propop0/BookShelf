@@ -67,14 +67,15 @@ class _BookCover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (url == null) {
+    final String? coverUrl = url;
+    if (coverUrl == null || coverUrl.isEmpty) {
       return _PlaceholderCover(color: Theme.of(context).colorScheme.surfaceContainerHighest);
     }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Image.network(
-        url!,
+        coverUrl,
         width: 72,
         height: 96,
         fit: BoxFit.cover,
