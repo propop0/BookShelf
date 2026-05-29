@@ -35,8 +35,6 @@ class BookDetailsScreen extends ConsumerWidget {
     final String appBarTitle =
         detailsState.value?.title ?? fallbackTitle ?? l10n.bookDetails;
 
-    final String effectiveHeroTag = heroTag ?? workId;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitle),
@@ -75,6 +73,8 @@ class BookDetailsScreen extends ConsumerWidget {
     AsyncValue<BookDetails> detailsState,
     AppLocalizations l10n,
   ) {
+    final String effectiveHeroTag = heroTag ?? workId;
+
     return detailsState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (Object error, _) => Center(
