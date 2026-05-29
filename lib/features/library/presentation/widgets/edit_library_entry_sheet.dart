@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/app_providers.dart';
 import '../../domain/entities/library_entry.dart';
 import '../../domain/entities/reading_status.dart';
+import '../../domain/utils/reading_page_validator.dart';
 import '../providers/library_controller.dart';
 
 Future<void> showEditLibraryEntrySheet({
@@ -64,6 +66,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
   late final TextEditingController _pageController;
   late final TextEditingController _totalPagesController;
   late final TextEditingController _ratingController;
+  int? _fetchedTotalPages;
 
   @override
   void initState() {
@@ -79,15 +82,71 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
     _ratingController = TextEditingController(
       text: widget.existing?.rating?.toString() ?? '',
     );
+
+    _pageController.addListener(_revalidatePageFields);
+    _totalPagesController.addListener(_revalidatePageFields);
+
+    if (_totalPagesController.text.trim().isEmpty) {
+      Future<void>.microtask(_prefillTotalPagesFromApi);
+    }
   }
 
   @override
   void dispose() {
+    _pageController.removeListener(_revalidatePageFields);
+    _totalPagesController.removeListener(_revalidatePageFields);
     _reviewController.dispose();
     _pageController.dispose();
     _totalPagesController.dispose();
     _ratingController.dispose();
     super.dispose();
+  }
+
+  void _revalidatePageFields() {
+    _formKey.currentState?.validate();
+  }
+
+  Future<void> _prefillTotalPagesFromApi() async {
+    final result = await ref.read(getBookDetailsUseCaseProvider)(widget.workId);
+    final int? pages = result.data?.numberOfPages;
+    if (!mounted || pages == null || pages <= 0) {
+      return;
+    }
+
+    _fetchedTotalPages = pages;
+    if (_totalPagesController.text.trim().isEmpty) {
+      setState(() {
+        _totalPagesController.text = pages.toString();
+      });
+    }
+  }
+
+  int? _effectiveCurrentPage() {
+    final String text = _pageController.text.trim();
+    if (text.isEmpty) {
+      return null;
+    }
+    return int.tryParse(text);
+  }
+
+  int? _effectiveTotalPages() {
+    final String text = _totalPagesController.text.trim();
+    if (text.isNotEmpty) {
+      return int.tryParse(text);
+    }
+    return widget.existing?.numberOfPages ??
+        widget.numberOfPages ??
+        _fetchedTotalPages;
+  }
+
+  int? _resolveTotalPagesForSave() {
+    final String text = _totalPagesController.text.trim();
+    if (text.isNotEmpty) {
+      return int.tryParse(text);
+    }
+    return widget.existing?.numberOfPages ??
+        widget.numberOfPages ??
+        _fetchedTotalPages;
   }
 
   void _openBookDetails() {
@@ -108,7 +167,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
 
     final int? rating = int.tryParse(_ratingController.text.trim());
     final int? page = int.tryParse(_pageController.text.trim());
-    final int? totalPages = int.tryParse(_totalPagesController.text.trim());
+    final int? totalPages = _resolveTotalPagesForSave();
 
     final LibraryEntry entry = LibraryEntry(
       workId: widget.workId,
@@ -197,7 +256,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   labelText: 'Rating (1-10)',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) {
+                validator: (String? value) {
                   final String text = (value ?? '').trim();
                   if (text.isEmpty) {
                     return null;
@@ -217,7 +276,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   labelText: 'Current page',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) {
+                validator: (String? value) {
                   final String text = (value ?? '').trim();
                   if (text.isEmpty) {
                     return null;
@@ -226,7 +285,10 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   if (page == null || page < 1) {
                     return 'Enter a valid page number.';
                   }
-                  return null;
+                  return ReadingPageValidator.currentPageExceedsTotal(
+                    currentPage: page,
+                    totalPages: _effectiveTotalPages(),
+                  );
                 },
               ),
               const SizedBox(height: 12),
@@ -237,7 +299,7 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   labelText: 'Total pages (optional)',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) {
+                validator: (String? value) {
                   final String text = (value ?? '').trim();
                   if (text.isEmpty) {
                     return null;
@@ -246,7 +308,10 @@ class _EditLibraryEntrySheetState extends ConsumerState<_EditLibraryEntrySheet> 
                   if (pages == null || pages < 1) {
                     return 'Enter a valid total page count.';
                   }
-                  return null;
+                  return ReadingPageValidator.totalPagesBelowCurrent(
+                    currentPage: _effectiveCurrentPage(),
+                    totalPages: pages,
+                  );
                 },
               ),
               const SizedBox(height: 12),

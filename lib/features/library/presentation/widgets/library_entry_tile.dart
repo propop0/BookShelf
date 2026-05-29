@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../book_catalog/domain/entities/book_details.dart';
 import '../../domain/entities/library_entry.dart';
 import '../../domain/entities/reading_status.dart';
 import '../../domain/utils/reading_progress.dart';
 import '../../domain/utils/reading_progress_calculator.dart';
+import '../providers/library_book_details_provider.dart';
 
-class LibraryEntryTile extends StatelessWidget {
+class LibraryEntryTile extends ConsumerWidget {
   const LibraryEntryTile({
     super.key,
     required this.entry,
@@ -20,8 +23,24 @@ class LibraryEntryTile extends StatelessWidget {
   final VoidCallback onDelete;
 
   @override
-  Widget build(BuildContext context) {
-    final ReadingProgress? progress = ReadingProgressCalculator.forEntry(entry);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool needsApiPageCount =
+        entry.numberOfPages == null && entry.status == ReadingStatus.reading;
+
+    final AsyncValue<BookDetails?> detailsState = needsApiPageCount
+        ? ref.watch(libraryBookDetailsProvider(entry.workId))
+        : const AsyncData<BookDetails?>(null);
+
+    final int? resolvedTotalPages =
+        entry.numberOfPages ?? detailsState.valueOrNull?.numberOfPages;
+
+    final ReadingProgress? progress = ReadingProgressCalculator.forEntry(
+      entry,
+      resolvedTotalPages: resolvedTotalPages,
+    );
+
+    final bool isLoadingPageCount =
+        needsApiPageCount && detailsState.isLoading && resolvedTotalPages == null;
 
     return Card(
       child: InkWell(
@@ -77,6 +96,15 @@ class LibraryEntryTile extends StatelessWidget {
                           value: progress.value,
                         ),
                       ),
+                    ] else if (isLoadingPageCount &&
+                        entry.currentPage != null) ...<Widget>[
+                      const SizedBox(height: 8),
+                      Text(
+                        'Page ${entry.currentPage}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 4),
+                      const LinearProgressIndicator(minHeight: 4),
                     ] else if (entry.currentPage != null &&
                         entry.status == ReadingStatus.reading) ...<Widget>[
                       const SizedBox(height: 4),

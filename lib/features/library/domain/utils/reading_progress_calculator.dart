@@ -5,7 +5,10 @@ import 'reading_progress.dart';
 class ReadingProgressCalculator {
   const ReadingProgressCalculator._();
 
-  static ReadingProgress? forEntry(LibraryEntry entry) {
+  static ReadingProgress? forEntry(
+    LibraryEntry entry, {
+    int? resolvedTotalPages,
+  }) {
     if (entry.status != ReadingStatus.reading) {
       return null;
     }
@@ -15,7 +18,7 @@ class ReadingProgressCalculator {
       return null;
     }
 
-    final int? totalPages = entry.numberOfPages;
+    final int? totalPages = resolvedTotalPages ?? entry.numberOfPages;
     if (totalPages != null && totalPages > 0) {
       final double fraction = (currentPage / totalPages).clamp(0.0, 1.0);
       final int percent = (fraction * 100).round();
