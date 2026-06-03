@@ -117,7 +117,31 @@ class BookDetailsScreen extends ConsumerWidget {
                     effectiveCoverUrl,
                     height: 280,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 280,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.broken_image_outlined,
+                              size: 64,
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              l10n.notAvailable, // Or a specific "Image load failed" string if available
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

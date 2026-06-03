@@ -153,7 +153,27 @@ class _Cover extends StatelessWidget {
     }
     Widget image = ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.network(coverUrl, width: 48, height: 64, fit: BoxFit.cover),
+      child: Image.network(
+        coverUrl,
+        width: 48,
+        height: 64,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 48,
+            height: 64,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.broken_image_outlined,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+            ),
+          );
+        },
+      ),
     );
 
     if (heroTag != null) {
