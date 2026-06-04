@@ -10,8 +10,8 @@ class ApiClient {
 
   final http.Client _httpClient;
 
-  Future<Map<String, dynamic>> getJson(String path) async {
-    final Uri uri = Uri.parse('${ApiConstants.openLibraryBaseUrl}$path');
+  Future<Map<String, dynamic>> getJson(String path, {String? baseUrl}) async {
+    final Uri uri = Uri.parse('${baseUrl ?? ApiConstants.openLibraryBaseUrl}$path');
     http.Response response;
 
     try {

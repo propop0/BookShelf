@@ -204,6 +204,20 @@ class MockAppLocalizations extends AppLocalizations {
   @override
   String get welcomeBack => 'Welcome';
   @override
+  String get signInWithGoogle => 'Sign in with Google';
+  @override
+  String get addManually => 'Add manually';
+  @override
+  String get addBookManuallyTitle => 'Add book manually';
+  @override
+  String get titleLabel => 'Title';
+  @override
+  String get authorsLabel => 'Author(s)';
+  @override
+  String get pagesLabel => 'Total pages';
+  @override
+  String get addBookButton => 'Add Book';
+  @override
   String get validationEmail => 'Invalid email';
   @override
   String get validationPassword => 'Invalid password';

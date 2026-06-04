@@ -6,7 +6,8 @@ class Book {
     required this.title,
     required this.authorNames,
     required this.firstPublishYear,
-    required this.coverId,
+    this.coverId,
+    this.coverUrlOverride,
   });
 
   final String workId;
@@ -14,10 +15,11 @@ class Book {
   final List<String> authorNames;
   final int? firstPublishYear;
   final int? coverId;
+  final String? coverUrlOverride;
 
   String get authorsLabel =>
       authorNames.isEmpty ? 'Unknown author' : authorNames.join(', ');
 
-  String? get coverUrl =>
-      coverId == null ? null : ApiConstants.largeCoverUrl(coverId!);
+  String? get coverUrl => coverUrlOverride ??
+      (coverId == null ? null : ApiConstants.largeCoverUrl(coverId!));
 }

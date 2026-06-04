@@ -6,7 +6,8 @@ class BookModel extends Book {
     required super.title,
     required super.authorNames,
     required super.firstPublishYear,
-    required super.coverId,
+    super.coverId,
+    super.coverUrlOverride,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {

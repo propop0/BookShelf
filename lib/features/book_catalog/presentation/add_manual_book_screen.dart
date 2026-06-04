@@ -8,7 +8,6 @@ import '../../auth/presentation/providers/auth_providers.dart';
 import '../../library/domain/entities/library_entry.dart';
 import '../../library/domain/entities/reading_status.dart';
 import '../../library/presentation/providers/library_controller.dart';
-import '../../library/presentation/providers/library_providers.dart';
 
 class AddManualBookScreen extends ConsumerStatefulWidget {
   const AddManualBookScreen({super.key, this.initialTitle});
