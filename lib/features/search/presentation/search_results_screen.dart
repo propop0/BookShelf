@@ -72,7 +72,25 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       ),
       data: (List<Book> books) {
         if (books.isEmpty) {
-          return Center(child: Text(l10n.noSearchResults));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(l10n.noSearchResults),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => context.push(
+                      '/add-manual?title=${Uri.encodeComponent(widget.query)}',
+                    ),
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.addManually),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         return RefreshIndicator(

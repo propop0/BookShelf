@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart'; // Added kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -111,12 +112,26 @@ class ProfileScreen extends ConsumerWidget {
               children: <Widget>[
                 CircleAvatar(
                   radius: 52,
-                  backgroundImage: (photoUrl != null && photoUrl.isNotEmpty)
-                      ? NetworkImage(photoUrl)
-                      : null,
-                  child: (photoUrl == null || photoUrl.isEmpty)
-                      ? const Icon(Icons.person, size: 48)
-                      : null,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: (photoUrl != null && photoUrl.isNotEmpty)
+                      ? ClipOval(
+                          child: Image.network(
+                            photoUrl,
+                            width: 104,
+                            height: 104,
+                            fit: BoxFit.cover,
+                            // Use HTML renderer on web to bypass some CORS issues if enabled
+                            // or just provide a fallback.
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.person, size: 48);
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          ),
+                        )
+                      : const Icon(Icons.person, size: 48),
                 ),
                 Positioned(
                   right: 0,

@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"propopo-bookshelf","appId":"1:748792057873:android:b643636ad85e39dc5021b0","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"propopo-bookshelf","configurations":{"android":"1:748792057873:android:b643636ad85e39dc5021b0","ios":"1:748792057873:ios:ea4a98a3b8a402525021b0","macos":"1:748792057873:ios:ea4a98a3b8a402525021b0","web":"1:748792057873:web:5cf05010467b101a5021b0","windows":"1:748792057873:web:c32c579f4c50ee7e5021b0"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "propopo-bookshelf",
+          "appId": "1:748792057873:android:b643636ad85e39dc5021b0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "propopo-bookshelf",
+          "configurations": {
+            "android": "1:748792057873:android:b643636ad85e39dc5021b0",
+            "ios": "1:748792057873:ios:ea4a98a3b8a402525021b0",
+            "macos": "1:748792057873:ios:ea4a98a3b8a402525021b0",
+            "web": "1:748792057873:web:5cf05010467b101a5021b0",
+            "windows": "1:748792057873:web:c32c579f4c50ee7e5021b0"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

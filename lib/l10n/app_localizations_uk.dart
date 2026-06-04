@@ -310,6 +310,27 @@ class AppLocalizationsUk extends AppLocalizations {
   String get welcomeBack => 'З поверненням';
 
   @override
+  String get signInWithGoogle => 'Увійти через Google';
+
+  @override
+  String get addManually => 'Додати вручну';
+
+  @override
+  String get addBookManuallyTitle => 'Додати книгу вручну';
+
+  @override
+  String get titleLabel => 'Назва';
+
+  @override
+  String get authorsLabel => 'Автор(и)';
+
+  @override
+  String get pagesLabel => 'Кількість сторінок (необов\'язково)';
+
+  @override
+  String get addBookButton => 'Додати книгу';
+
+  @override
   String get validationEmail => 'Введіть коректний email.';
 
   @override

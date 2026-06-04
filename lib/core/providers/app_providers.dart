@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/book_catalog/data/datasources/google_books_remote_data_source.dart';
 import '../../features/book_catalog/data/datasources/open_library_remote_data_source.dart';
 import '../../features/book_catalog/data/repositories/book_repository_impl.dart';
 import '../../features/book_catalog/domain/repositories/book_repository.dart';
@@ -23,8 +24,15 @@ final openLibraryRemoteDataSourceProvider = Provider<OpenLibraryRemoteDataSource
   return OpenLibraryRemoteDataSource(ref.watch(apiClientProvider));
 });
 
+final googleBooksRemoteDataSourceProvider = Provider<GoogleBooksRemoteDataSource>((ref) {
+  return GoogleBooksRemoteDataSource(ref.watch(apiClientProvider));
+});
+
 final bookRepositoryProvider = Provider<BookRepository>((ref) {
-  return BookRepositoryImpl(ref.watch(openLibraryRemoteDataSourceProvider));
+  return BookRepositoryImpl(
+    ref.watch(openLibraryRemoteDataSourceProvider),
+    ref.watch(googleBooksRemoteDataSourceProvider),
+  );
 });
 
 final getBookDetailsUseCaseProvider = Provider<GetBookDetailsUseCase>((ref) {

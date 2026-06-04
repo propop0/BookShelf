@@ -658,6 +658,48 @@ abstract class AppLocalizations {
   /// **'Welcome back'**
   String get welcomeBack;
 
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @addManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Add manually'**
+  String get addManually;
+
+  /// No description provided for @addBookManuallyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add book manually'**
+  String get addBookManuallyTitle;
+
+  /// No description provided for @titleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get titleLabel;
+
+  /// No description provided for @authorsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Author(s)'**
+  String get authorsLabel;
+
+  /// No description provided for @pagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total pages (optional)'**
+  String get pagesLabel;
+
+  /// No description provided for @addBookButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Book'**
+  String get addBookButton;
+
   /// No description provided for @validationEmail.
   ///
   /// In en, this message translates to:

@@ -105,8 +105,6 @@ class LibraryEntryTile extends ConsumerWidget {
                     l10n.pageNumber(entry.currentPage!),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const SizedBox(height: 4),
-                  const LinearProgressIndicator(minHeight: 4),
                 ] else if (entry.currentPage != null &&
                     entry.status == ReadingStatus.reading) ...<Widget>[
                   const SizedBox(height: 4),

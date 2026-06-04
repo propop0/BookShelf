@@ -43,4 +43,11 @@ class AuthController extends AutoDisposeAsyncNotifier<void> {
   Future<void> signOut() async {
     await ref.read(authRepositoryProvider).signOut();
   }
+
+  Future<void> signInWithGoogle() async {
+    state = const AsyncLoading<void>();
+    state = await AsyncValue.guard(() async {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+    });
+  }
 }

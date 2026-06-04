@@ -310,6 +310,27 @@ class AppLocalizationsPl extends AppLocalizations {
   String get welcomeBack => 'Witaj ponownie';
 
   @override
+  String get signInWithGoogle => 'Zaloguj się przez Google';
+
+  @override
+  String get addManually => 'Dodaj ręcznie';
+
+  @override
+  String get addBookManuallyTitle => 'Dodaj książkę ręcznie';
+
+  @override
+  String get titleLabel => 'Tytuł';
+
+  @override
+  String get authorsLabel => 'Autor(zy)';
+
+  @override
+  String get pagesLabel => 'Liczba stron (opcjonalnie)';
+
+  @override
+  String get addBookButton => 'Dodaj książkę';
+
+  @override
   String get validationEmail => 'Wpisz prawidłowy e-mail.';
 
   @override

@@ -309,6 +309,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeBack => 'Welcome back';
 
   @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get addManually => 'Add manually';
+
+  @override
+  String get addBookManuallyTitle => 'Add book manually';
+
+  @override
+  String get titleLabel => 'Title';
+
+  @override
+  String get authorsLabel => 'Author(s)';
+
+  @override
+  String get pagesLabel => 'Total pages (optional)';
+
+  @override
+  String get addBookButton => 'Add Book';
+
+  @override
   String get validationEmail => 'Enter a valid email.';
 
   @override

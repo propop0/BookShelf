@@ -5,6 +5,7 @@ import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/register_screen.dart';
+import '../../features/book_catalog/presentation/add_manual_book_screen.dart';
 import '../../features/details/presentation/book_details_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/library/presentation/my_library_screen.dart';
@@ -121,6 +122,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             primarySubject: subject,
             heroTag: heroTag,
           );
+        },
+      ),
+      GoRoute(
+        path: '/add-manual',
+        name: 'add-manual',
+        builder: (context, state) {
+          final String? title = state.uri.queryParameters['title'];
+          return AddManualBookScreen(initialTitle: title);
         },
       ),
     ],

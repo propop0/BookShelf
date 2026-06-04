@@ -42,10 +42,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final AsyncValue<void> authState = ref.read(authControllerProvider);
     if (authState.hasError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mapAuthException(authState.error!, context.l10n))),
-      );
+      _showError(authState.error!);
     }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    await ref.read(authControllerProvider.notifier).signInWithGoogle();
+
+    if (!mounted) {
+      return;
+    }
+
+    final AsyncValue<void> authState = ref.read(authControllerProvider);
+    if (authState.hasError) {
+      _showError(authState.error!);
+    }
+  }
+
+  void _showError(Object error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mapAuthException(error, context.l10n))),
+    );
   }
 
   @override
@@ -122,6 +139,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 TextButton(
                   onPressed: () => context.push('/register'),
                   child: Text(l10n.createAccountPrompt),
+                ),
+                const SizedBox(height: 16),
+                const Row(
+                  children: <Widget>[
+                    Expanded(child: Divider()),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text('OR'),
+                    ),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: isLoading ? null : _signInWithGoogle,
+                  icon: const Icon(Icons.login),
+                  label: Text(l10n.signInWithGoogle),
                 ),
               ],
             ),

@@ -32,4 +32,12 @@ class ApiConstants {
       '/search.json?q=trending_score_hourly_sum:[1 TO *]&sort=trending&limit=$trendingLimit';
 
   static String largeCoverUrl(int coverId) => '$coversBaseUrl/$coverId-L.jpg';
+
+  // Google Books API
+  static const String googleBooksBaseUrl = 'https://www.googleapis.com/books/v1';
+  static String searchGoogleBooksPath(String query) {
+    final String encoded = Uri.encodeQueryComponent(query);
+    // langRestrict=uk helps find Ukrainian books
+    return '/volumes?q=$encoded&maxResults=$searchLimit&langRestrict=uk';
+  }
 }
