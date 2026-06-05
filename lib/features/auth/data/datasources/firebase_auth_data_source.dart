@@ -30,11 +30,19 @@ class FirebaseAuthDataSource {
     return _auth.sendPasswordResetEmail(email: email);
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) {
-      throw Exception('Google sign-in aborted by user');
-    }
+Future<UserCredential> signInWithGoogle() async {
+
+const String webClientId = '748792057873-mhbfpjim3cblqbak9cjc1jbtl227qv0k.apps.googleusercontent.com';
+
+final GoogleSignIn googleSignIn = GoogleSignIn(
+clientId: kIsWeb ? webClientId : null,
+);
+
+final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+if (googleUser == null) {
+throw Exception('Google sign-in aborted by user');
+}
 
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(

@@ -49,7 +49,7 @@ class GoogleBooksRemoteDataSource {
     return BookModel(
       workId: 'gb_$id', // Prefix to distinguish from OpenLibrary
       title: title,
-      authorNames: authors.cast<String>(),
+      authorNames: authors.whereType<String>().toList(),
       coverUrlOverride: coverUrl,
       firstPublishYear: _parseYear(volumeInfo['publishedDate'] as String?),
     );
