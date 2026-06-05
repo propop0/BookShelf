@@ -31,6 +31,12 @@ class ApiClient {
       if (decoded is Map<String, dynamic>) {
         return decoded;
       }
+      if (decoded is List<dynamic>) {
+        // Some APIs might return a list at the root. 
+        // We'll wrap it in a map for consistency if needed, 
+        // but for now, we'll keep it as is or handle it.
+        return {'items': decoded};
+      }
       throw const ParsingException('Expected a JSON object response.');
     } on FormatException {
       throw const ParsingException();

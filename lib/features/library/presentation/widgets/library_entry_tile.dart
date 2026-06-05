@@ -87,24 +87,21 @@ class LibraryEntryTile extends ConsumerWidget {
                 if (progress != null) ...<Widget>[
                   const SizedBox(height: 8),
                   Text(
-                    progress.localizedLabel(l10n),
+                    isLoadingPageCount
+                        ? l10n.pageNumber(entry.currentPage!)
+                        : progress.localizedLabel(l10n),
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  const SizedBox(height: 4),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      minHeight: 6,
-                      value: progress.value,
+                  if (progress.isDeterminate) ...[
+                    const SizedBox(height: 4),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        minHeight: 6,
+                        value: progress.value,
+                      ),
                     ),
-                  ),
-                ] else if (isLoadingPageCount &&
-                    entry.currentPage != null) ...<Widget>[
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.pageNumber(entry.currentPage!),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  ],
                 ] else if (entry.currentPage != null &&
                     entry.status == ReadingStatus.reading) ...<Widget>[
                   const SizedBox(height: 4),

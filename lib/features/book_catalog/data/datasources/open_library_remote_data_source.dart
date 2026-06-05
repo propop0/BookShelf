@@ -10,18 +10,19 @@ class OpenLibraryRemoteDataSource {
   final ApiClient _apiClient;
 
   Future<List<BookModel>> searchBooks(String query) async {
-    final Map<String, dynamic> json = await _apiClient.getJson(
-      ApiConstants.searchBooksPath(query),
-    );
-    final List<dynamic> docs = (json['docs'] as List<dynamic>?) ?? <dynamic>[];
-
     try {
+      final Map<String, dynamic> json = await _apiClient.getJson(
+        ApiConstants.searchBooksPath(query),
+      );
+      final List<dynamic> docs = (json['docs'] as List<dynamic>?) ?? <dynamic>[];
+
       return docs
           .whereType<Map<String, dynamic>>()
           .map(BookModel.fromOpenLibraryJson)
           .where((BookModel book) => book.workId.isNotEmpty)
           .toList();
-    } on Exception {
+    } on Exception catch (e) {
+      if (e is AppException) rethrow;
       throw const ParsingException();
     }
   }
