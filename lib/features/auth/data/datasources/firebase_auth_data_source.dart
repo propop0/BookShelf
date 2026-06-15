@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class FirebaseAuthDataSource {
   const FirebaseAuthDataSource(this._auth);
@@ -30,26 +31,26 @@ class FirebaseAuthDataSource {
     return _auth.sendPasswordResetEmail(email: email);
   }
 
-Future<UserCredential> signInWithGoogle() async {
+  Future<UserCredential> signInWithGoogle() async {
 
-const String webClientId = '748792057873-mhbfpjim3cblqbak9cjc1jbtl227qv0k.apps.googleusercontent.com';
+  const String webClientId = '748792057873-mhbfpjim3cblqbak9cjc1jbtl227qv0k.apps.googleusercontent.com';
 
-final GoogleSignIn googleSignIn = GoogleSignIn(
-clientId: kIsWeb ? webClientId : null,
-);
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+  clientId: kIsWeb ? webClientId : null,
+  );
 
-final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+  final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-if (googleUser == null) {
-throw Exception('Google sign-in aborted by user');
-}
+  if (googleUser == null) {
+  throw Exception('Google sign-in aborted by user');
+  }
 
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+  final AuthCredential credential = GoogleAuthProvider.credential(
+  accessToken: googleAuth.accessToken,
+  idToken: googleAuth.idToken,
+  );
 
-    return _auth.signInWithCredential(credential);
+  return _auth.signInWithCredential(credential);
   }
 }
